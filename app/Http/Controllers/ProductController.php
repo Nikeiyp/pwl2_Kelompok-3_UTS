@@ -75,4 +75,101 @@ class ProductController extends Controller
 
         return redirect()->route('products.index')->with(['error' => 'Failed to upload image (request).']);
     }
+
+    /**
+    * @param mixed Sid
+    * @return View
+    */
+    public function show(string $id): View
+    {
+        //get product by ID
+        $product_model = new Product;
+        $product = $product_model->get_product()->where("products.id", $id)->firstOrFail();
+
+        //render view with product
+        return view('products.show', compact('product'));
+    }
+
+    /**
+    * edit
+    *
+    * @param mixed Sid
+    * @return View
+    */
+    public function edit(string $id): View
+    {
+        //get product by ID
+        $product_model = new Product;
+        $data['product'] = $product_model->get_product()->where("products.id", $id)->firstOrFail();
+        
+        $category_product = new Category_product;
+        $supplier = new Supplier;
+        $data['categories'] = $category_product->get_category_product()->get();
+        $data['suppliers_'] = $supplier->get_supplier();
+   
+        return view('products.edit', compact('data'));
+    }
+
+    /**
+    * update
+    *
+    * @param mixed $request
+    * @param mixed $id
+    * @return RedirectResponse
+    */
+    public function update(Request $request, $id): RedirectResponse
+    {
+        //validate form
+        $request->validate([
+            'image'         => 'image|mimes:jpeg,jpg,png|max:2048',
+            'title'         => 'required|min:5',
+            'description'   => 'required|min:10',
+            'price'         => 'required|numeric',
+            'stok'         => 'required|numeric'
+        ]);
+
+        //get product by ID
+        $product_model = new Product;
+        $nama_gambar = null;
+
+        if ($request->hasFile('image')) {
+            
+            $image = $request->file('image');
+            $store_image = $image->store('images', 'public'); 
+            $nama_gambar = $image->hashName();
+
+            $data_product = $product_model->get_product()->where("products.id", $id)->firstOrFail();
+            
+            Storage::disk('public')->delete('images/'.$data_product->image);
+            
+        } 
+            $request_data = [
+                'title'                 => $request->title,
+                'product_category_id'   => $request->product_category_id,
+                'supplier_id'           => $request->id_supplier,
+                'description'           => $request->description,
+                'price'                 => $request->price,
+                'stock'                 => $request->stok
+            ];
+
+            $update_product = $product_model->updateProduct($id, $request, $nama_gambar);
+
+        return redirect()->route('products.index')->with(['success' => 'Data Berhasil Diubah!']);
+    }
+
+    /**
+    * @param mixed Sid
+    * @return RedirectResponse
+    */
+    public function destroy($id): RedirectResponse
+    {
+        $product_model = new Product;
+        $product = $product_model->get_product()->where("products.id", $id)->firstOrFail();
+
+        Storage::disk('public')->delete('images/'.$product->image);
+
+        $product->delete();
+
+        return redirect()->route('products.index')->with(['success' => 'Data Berhasil Dihapus!']);
+    }
 }
