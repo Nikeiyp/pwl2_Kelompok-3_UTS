@@ -1,4 +1,3 @@
-<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -13,7 +12,7 @@
     <div class="row">
         <div class="col-md-12">
             <div>
-                <h3 class="text-center my-4">Tutorial Laravel 12 - Products</h3>
+                <h3 class="text-center my-4">JUALAN HP SECOND - BERSERTIFIKAT</h3>
                 <hr>
             </div>
 
@@ -45,22 +44,26 @@
                                 <td>Rp {{ number_format($product->price, 2, ',', '.') }}</td>
                                 <td>{{ $product->stock }}</td>
                                 <td class="text-center">
-                                    <form onsubmit="return confirm('Apakah Anda Yakin ?');" 
+                                    <a href="{{ route('products.show', $product->id) }}" 
+                                       class="btn btn-sm btn-dark">SHOW</a>
+                                    <a href="{{ route('products.edit', $product->id) }}" 
+                                       class="btn btn-sm btn-primary">EDIT</a>
+
+                                    <form id="hapus-form-{{ $product->id }}" 
                                           action="{{ route('products.destroy', $product->id) }}" 
-                                          method="POST">
-                                        <a href="{{ route('products.show', $product->id) }}" 
-                                           class="btn btn-sm btn-dark">SHOW</a>
-                                        <a href="{{ route('products.edit', $product->id) }}" 
-                                           class="btn btn-sm btn-primary">EDIT</a>
+                                          method="POST" style="display:inline;">
                                         @csrf
                                         @method('DELETE')
-                                        <button type="submit" class="btn btn-sm btn-danger">HAPUS</button>
+                                        <button type="button" class="btn btn-sm btn-danger"
+                                                onclick="confirmDelete({{ $product->id }}, '{{ $product->title }}')">
+                                            HAPUS
+                                        </button>
                                     </form>
                                 </td>
                             </tr>
                             @empty
                             <tr>
-                                <td colspan="6" class="text-center">Data Produk Belum Ada</td>
+                                <td colspan="7" class="text-center">Data Produk Belum Ada</td>
                             </tr>
                             @endforelse
                         </tbody>
@@ -72,10 +75,12 @@
     </div>
 </div>
 
+{{-- Bootstrap & SweetAlert2 --}}
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-    // message with sweetalert
+<script>
+    // Notifikasi sukses/gagal
     @if(session('success'))
         Swal.fire({
             icon: "success",
@@ -93,6 +98,24 @@
             timer: 2000
         });
     @endif
+
+    // Konfirmasi hapus pakai SweetAlert
+    function confirmDelete(id, title) {
+        Swal.fire({
+            title: "Yakin hapus data " + title + " ?",
+            text: "Data yang dihapus tidak bisa dikembalikan!",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#d33",
+            cancelButtonColor: "#3085d6",
+            confirmButtonText: "Ya, hapus!",
+            cancelButtonText: "Batal"
+        }).then((result) => {
+            if (result.isConfirmed) {
+                document.getElementById('hapus-form-' + id).submit();
+            }
+        });
+    }
 </script>
 
 </body>
