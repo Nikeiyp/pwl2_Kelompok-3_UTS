@@ -1,4 +1,4 @@
-<DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -8,6 +8,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body style="background: lightgray">
+
     <div class="container mt-5">
         <div class="row">
             <div class="col-md-12">
@@ -17,13 +18,13 @@
                 </div>
                 <div class="card border-0 shadow-sm rounded">
                     <div class="card-body">
-                        <a href="{{ route('products.create') }}" class="btn btn-md btn-success mb-3">ADD PRODUCT </a>
+                        <a href="{{ route('products.create') }}" class="btn btn-md btn-success mb-3">ADD PRODUCT</a>
                         <table class="table table-bordered">
                             <thead>
                                 <tr>
                                     <th scope="col">IMAGE</th>
                                     <th scope="col">TITLE</th>
-                                    <th scope="col">supplier</th>
+                                    <th scope="col">SUPPLIER</th>
                                     <th scope="col">CATEGORY</th>
                                     <th scope="col">PRICE</th>
                                     <th scope="col">STOCK</th>
@@ -42,20 +43,20 @@
                                         <td>{{ "Rp " . number_format($product->price,2,',','.') }}</td>
                                         <td>{{ $product->stock }}</td>
                                         <td class="text-center">
-                                            <form onsubmit="return confirm('Apakah Anda Yakin?');" action="{{ route('products.destroy', $product->id) }}" method="POST">
+                                            <form action="{{ route('products.destroy', $product->id) }}" method="POST">
                                                 <a href="{{ route('products.show', $product->id) }}" class="btn btn-sm btn-dark">SHOW</a>
                                                 <a href="{{ route('products.edit', $product->id) }}" class="btn btn-sm btn-primary">EDIT</a>
                                                 @csrf
                                                 @method('DELETE')
-                                                <button type="submit" class="btn btn-sm btn-danger">HAPUS</button>
+                                                <button type="submit" class="btn btn-sm btn-danger btn-delete">HAPUS</button>
                                             </form>
                                         </td>
                                     </tr>
-                                    @empty
-                                        <div class="alert alert-danger">
-                                            Data Products belum tersedia
-                                        </div>
-                                    @endforelse
+                                @empty
+                                    <div class="alert alert-danger">
+                                        Data Products belum tersedia.
+                                    </div>
+                                @endforelse
                             </tbody>
                         </table>
                         {{ $products->links() }}
@@ -67,6 +68,7 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
     <script>
         //message with sweetalert
         @if(session('success'))
@@ -80,12 +82,38 @@
         @elseif(session('error'))
             Swal.fire({
                 icon: "error",
-                title: "GAGAL",
+                title: "GAGAL!",
                 text: "{{ session('error') }}",
                 showConfirmButton: false,
                 timer: 2000
             });
         @endif
+
+        // SWAL FIRE
+        const deleteButtons = document.querySelectorAll('.btn-delete');
+        deleteButtons.forEach(button => {
+            button.addEventListener('click', function (e) {
+                e.preventDefault();
+
+                const form = this.closest('form');
+
+                Swal.fire({
+                    title: 'Yakin hapus data ini?',
+                    text: "Data yang dihapus tidak bisa dikembalikan!",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#d33',
+                    cancelButtonColor: '#3085d6',
+                    confirmButtonText: 'Ya, hapus!',
+                    cancelButtonText: 'Batal'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        form.submit();
+                    }
+                });
+            });
+        });
+
     </script>
 
 </body>
