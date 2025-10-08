@@ -10,6 +10,16 @@ class Supplier extends Model
     use HasFactory;
     protected $table = 'supplier';
 
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array
+     */
+    protected $fillable = [
+        'supplier_name',
+        'pic_supplier',
+    ];
+
     public function get_supplier()
     {
         return $this->select("*")->get();
