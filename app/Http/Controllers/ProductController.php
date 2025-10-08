@@ -125,7 +125,7 @@ class ProductController extends Controller
             'title'         => 'required|min:5',
             'description'   => 'required|min:10',
             'price'         => 'required|numeric',
-            'stok'         => 'required|numeric'
+            'stock'         => 'required|numeric'
         ]);
 
         //get product by ID
@@ -146,10 +146,10 @@ class ProductController extends Controller
             $request_data = [
                 'title'                 => $request->title,
                 'product_category_id'   => $request->product_category_id,
-                'supplier_id'           => $request->id_supplier,
+                'supplier_id'           => $request->supplier_id,
                 'description'           => $request->description,
                 'price'                 => $request->price,
-                'stock'                 => $request->stok
+                'stock'                 => $request->stock
             ];
 
             $update_product = $product_model->updateProduct($id, $request, $nama_gambar);

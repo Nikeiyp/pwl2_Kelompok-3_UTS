@@ -103,7 +103,7 @@
                                 <div class="col-md-6">
                                     <div class="form-group mb-3">
                                         <label class="font-weight-bold">STOCK</label>
-                                        <input type="number" class="form-control @error('stok') is-invalid @enderror" name="stok" value="{{ old('stok', $data['product']->stock) }}" placeholder="Masukkan Stock Product">
+                                        <input type="number" class="form-control @error('stock') is-invalid @enderror" name="stock" value="{{ old('stock', $data['product']->stock) }}" placeholder="Masukkan Stock Product">
                                     
                                         @error('stock')
                                             <div class="alert alert-danger mt-2">

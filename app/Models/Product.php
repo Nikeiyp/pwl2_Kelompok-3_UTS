@@ -27,12 +27,14 @@ class Product extends Model
     ];
 
     public function get_product(){
+
         $sql = $this->select("products.*", "category_product.product_category_name as product_category_name", "supplier.supplier_name")
                     ->leftjoin('category_product', 'category_product.id', '=', 'products.product_category_id')
                     ->leftjoin('supplier', 'supplier.id', '=', 'products.supplier_id');
 
         return $sql;
     }
+
     public static function storeProduct($request, $image)
     {
         return self::create([
@@ -56,7 +58,7 @@ class Product extends Model
                 'supplier_id'           => $request['supplier_id'],
                 'description'           => $request['description'],
                 'price'                 => $request['price'],
-                'stock'                 => $request['stok']
+                'stock'                 => $request['stock']
             ];
 
             if (!empty($image)) {
