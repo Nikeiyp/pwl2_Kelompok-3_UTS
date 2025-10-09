@@ -10,9 +10,17 @@ class Category_product extends Model
     use HasFactory;
     protected $table = 'category_product';
 
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array
+     */
+    protected $fillable = [
+        'product_category_name',
+    ];
+
     public function get_category_product()
     {
-        $sql = $this->select("*");
-        return $sql;
+        return $this->select("*");
     }
 }
