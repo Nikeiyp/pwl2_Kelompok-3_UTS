@@ -7,29 +7,6 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body style="background: lightgray">
-
-    <nav class="navbar navbar-expand-lg navbar-light bg-light mb-4">
-        <div class="container-fluid">
-            <a class="navbar-brand" href="#">UTS Project</a>
-            <div class="collapse navbar-collapse">
-                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ route('products.index') }}">Products</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">Supplier</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ route('category_products.index') }}">Category Products</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ route('transactions.index') }}">Transactions</a>
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </nav>
-
     <div class="container mt-5">
         <div class="row">
             <div class="col-md-12">
@@ -45,6 +22,8 @@
                                 <tr>
                                     <th>ID</th>
                                     <th>CASHIER NAME</th>
+                                    <th>CUSTOMER EMAIL</th>
+                                    <th>GRAND TOTAL</th>
                                     <th>DATE</th>
                                     <th style="width: 25%">ACTIONS</th>
                                 </tr>
@@ -54,21 +33,30 @@
                                     <tr>
                                         <td>{{ $transaction->id }}</td>
                                         <td>{{ $transaction->cashier_name }}</td>
+                                        <td>{{ $transaction->customer_email ?? '-' }}</td>
+                                        <td>Rp {{ number_format($transaction->grand_total, 2, ',', '.') }}</td>
                                         <td>{{ $transaction->created_at->format('d-m-Y') }}</td>
                                         <td class="text-center">
-                                            <form onsubmit="return confirm('Are you sure?');" action="{{ route('transactions.destroy', $transaction->id) }}" method="POST">
+                                            <form action="{{ route('transactions.destroy', $transaction->id) }}" method="POST">
                                                 <a href="{{ route('transactions.show', $transaction->id) }}" class="btn btn-sm btn-dark">SHOW</a>
                                                 <a href="{{ route('transactions.edit', $transaction->id) }}" class="btn btn-sm btn-primary">EDIT</a>
                                                 @csrf
                                                 @method('DELETE')
-                                                <button type="submit" class="btn btn-sm btn-danger btn-delete">DELETE</button>
+                                                <button type="submit" class="btn btn-sm btn-danger btn-delete" 
+                                                        data-name="Transaction #{{ $transaction->id }}">
+                                                    DELETE
+                                                </button>
                                             </form>
                                         </td>
                                     </tr>
                                 @empty
-                                    <div class="alert alert-danger">
-                                        No Transaction Data Available.
-                                    </div>
+                                    <tr>
+                                        <td colspan="6">
+                                            <div class="alert alert-danger">
+                                                No Transaction Data Available.
+                                            </div>
+                                        </td>
+                                    </tr>
                                 @endforelse
                             </tbody>
                         </table>
@@ -78,38 +66,32 @@
             </div>
         </div>
     </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    @if(session('success'))
-        <script>
-        //message with sweetalert
+
+    <script>
+        // Pesan sukses setelah aksi (create, update, delete)
         @if(session('success'))
             Swal.fire({
-                icon: "success",
-                title: "BERHASIL",
-                text: "{{ session('success') }}",
-                showConfirmButton: false,
-                timer: 2000
-            });
-        @elseif(session('error'))
-            Swal.fire({
-                icon: "error",
-                title: "GAGAL!",
-                text: "{{ session('error') }}",
+                icon: 'success',
+                title: 'SUCCESS',
+                text: '{{ session('success') }}',
                 showConfirmButton: false,
                 timer: 2000
             });
         @endif
 
-        // SWAL FIRE
+        // Logika untuk konfirmasi hapus yang dinamis
         const deleteButtons = document.querySelectorAll('.btn-delete');
         deleteButtons.forEach(button => {
             button.addEventListener('click', function (e) {
                 e.preventDefault();
-
+                
+                const dataName = this.getAttribute('data-name');
                 const form = this.closest('form');
 
                 Swal.fire({
-                    title: 'Yakin hapus data ini?',
+                    title: `Yakin hapus ${dataName}?`,
                     text: "Data yang dihapus tidak bisa dikembalikan!",
                     icon: 'warning',
                     showCancelButton: true,
@@ -124,8 +106,6 @@
                 });
             });
         });
-
     </script>
-    @endif
 </body>
 </html>

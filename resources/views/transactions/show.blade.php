@@ -15,31 +15,34 @@
             <div class="card-body">
                 <p><strong>Cashier:</strong> {{ $transaction->cashier_name }}</p>
                 <p><strong>Customer Email:</strong> {{ $transaction->customer_email ?? '-' }}</p>
-                
-                {{-- UBAH BARIS DI BAWAH INI --}}
                 <p><strong>Date:</strong> {{ $transaction->created_at->format('d F Y - H:i:s') }}</p>
-                {{-- BATAS PERUBAHAN --}}
-
                 <hr>
                 <h5>Items Purchased</h5>
                 <table class="table table-bordered">
-                    <thead><tr><th>Product</th><th>Quantity</th><th>Unit Price</th><th>Subtotal</th></tr></thead>
+                    <thead>
+                        <tr>
+                            <th>Product</th>
+                            <th>Quantity</th>
+                            <th>Unit Price</th>
+                            <th>Subtotal</th>
+                        </tr>
+                    </thead>
                     <tbody>
-                        @php $total = 0; @endphp
                         @foreach($transaction->details as $detail)
-                            @php
-                                $subtotal = $detail->product->price * $detail->quantity;
-                                $total += $subtotal;
-                            @endphp
                             <tr>
                                 <td>{{ $detail->product->title }}</td>
                                 <td>{{ $detail->quantity }}</td>
-                                <td>Rp {{ number_format($detail->product->price) }}</td>
-                                <td>Rp {{ number_format($subtotal) }}</td>
+                                <td>Rp {{ number_format($detail->price, 2, ',', '.') }}</td>
+                                <td>Rp {{ number_format($detail->subtotal, 2, ',', '.') }}</td>
                             </tr>
                         @endforeach
                     </tbody>
-                    <tfoot><tr><th colspan="3" class="text-end">Total:</th><th>Rp {{ number_format($total) }}</th></tr></tfoot>
+                    <tfoot>
+                        <tr>
+                            <th colspan="3" class="text-end">Grand Total:</th>
+                            <th>Rp {{ number_format($transaction->grand_total, 2, ',', '.') }}</th>
+                        </tr>
+                    </tfoot>
                 </table>
                 <a href="{{ route('transactions.index') }}" class="btn btn-secondary">Back</a>
             </div>

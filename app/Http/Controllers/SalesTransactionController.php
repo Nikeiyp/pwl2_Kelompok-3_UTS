@@ -21,7 +21,11 @@ class SalesTransactionController extends Controller
     public function create(): View
     {
         $products = Product::where('stock', '>', 0)->orderBy('title')->get();
-        return view('transactions.create', compact('products'));
+        
+        // Ubah baris ini agar stock juga masuk ke JSON
+        $productsJson = $products->keyBy('id');
+
+        return view('transactions.create', compact('products', 'productsJson'));
     }
 
     public function store(Request $request): RedirectResponse
@@ -86,11 +90,14 @@ class SalesTransactionController extends Controller
         $transaction = SalesTransaction::find($id);
         $products = Product::orderBy('title')->get();
         
+        // Ubah baris ini agar stock juga masuk ke JSON
+        $productsJson = $products->keyBy('id');
+        
         $transaction->details = SalesTransactionDetail::where('sales_transaction_id', $id)->get();
 
-        return view('transactions.edit', compact('transaction', 'products'));
+        return view('transactions.edit', compact('transaction', 'products', 'productsJson'));
     }
-
+    
     public function update(Request $request, string $id): RedirectResponse
     {
         $request->validate([

@@ -62,8 +62,7 @@
     </div>
 
 <script>
-    // Data produk dari model, diubah ke format JSON untuk JavaScript
-    const products = @json($products->keyBy('id'));
+    const products = @json($productsJson);
 
     const productRowsContainer = document.getElementById('product-rows');
     const addProductBtn = document.getElementById('add-product-btn');
@@ -82,16 +81,18 @@
     }
 
     addProductBtn.addEventListener('click', function() {
+
         const index = new Date().getTime();
         const newRow = document.createElement('div');
         newRow.classList.add('row', 'mb-2', 'align-items-center', 'product-row');
-        newRow.dataset.price = "0"; // Default price
+        newRow.dataset.price = "0";
+        newRow.dataset.stock = "0"; 
         newRow.innerHTML = `
             <div class="col-md-4">
                 <select name="products[${index}][id]" class="form-select product-select">
                     <option value="">Select a Product</option>
                     @foreach ($products as $product)
-                        <option value="{{ $product->id }}">{{ $product->title }} (Stock: {{ $product->stock }})</option>
+                        <option value="{{ $product->id }}">{{ $product->title }}</option>
                     @endforeach
                 </select>
             </div>
@@ -110,30 +111,51 @@
         productRowsContainer.appendChild(newRow);
     });
 
+    productRowsContainer.addEventListener('input', function(e) {
+        const row = e.target.closest('.product-row');
+        if (!row) return;
+
+        if (e.target.classList.contains('quantity-input')) {
+            const stock = parseInt(row.dataset.stock) || 0;
+            const quantity = parseInt(e.target.value) || 0;
+
+            if (quantity > stock) {
+                alert(`Quantity cannot exceed available stock (${stock})!`);
+                e.target.value = stock; 
+            }
+        }
+        
+        calculateGrandTotal();
+    });
+
     productRowsContainer.addEventListener('change', function(e) {
         const row = e.target.closest('.product-row');
         if (!row) return;
 
-        // Jika dropdown produk berubah
         if (e.target.classList.contains('product-select')) {
             const selectedProductId = e.target.value;
             const unitPriceElement = row.querySelector('.unit-price-text');
             
             if (selectedProductId && products[selectedProductId]) {
-                const price = products[selectedProductId].price;
-                row.dataset.price = price; // Simpan harga di data-attribute
-                unitPriceElement.textContent = `Rp ${price.toLocaleString('id-ID')}`; // Tampilkan harga dari model
+                const productData = products[selectedProductId];
+                row.dataset.price = productData.price;
+                row.dataset.stock = productData.stock;
+                unitPriceElement.textContent = `Rp ${productData.price.toLocaleString('id-ID')}`;
             } else {
                 row.dataset.price = 0;
+                row.dataset.stock = 0;
                 unitPriceElement.textContent = `Rp 0`;
             }
+
+            row.querySelector('.quantity-input').value = 1;
+            row.querySelector('.quantity-input').dispatchEvent(new Event('input'));
         }
         
-        // Kalkulasi ulang total setiap kali ada perubahan
         calculateGrandTotal();
     });
     
     productRowsContainer.addEventListener('click', function(e) {
+
         if (e.target.classList.contains('btn-remove')) {
             e.target.closest('.product-row').remove();
             calculateGrandTotal();
