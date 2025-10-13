@@ -11,6 +11,7 @@
 <<<<<<< Updated upstream
 <body style="background: lightgray">
 
+<<<<<<< HEAD
     
 =======
 <body>
@@ -33,12 +34,30 @@
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="{{ route('transactions.index') }}">Transactions</a>
+=======
+    <nav class="navbar navbar-expand-lg navbar-light bg-light mb-4">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">UTS Project</a>
+            <div class="collapse navbar-collapse">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ route('products.index') }}">Produk</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ route('suppliers.index') }}">Supplier</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Transaksi</a>
+>>>>>>> a2238f45693b4eeb457f229155c93c6f1ce4be81
                     </li>
                 </ul>
             </div>
         </div>
     </nav>
+<<<<<<< HEAD
 >>>>>>> Stashed changes
+=======
+>>>>>>> a2238f45693b4eeb457f229155c93c6f1ce4be81
 
     <div class="container mt-5">
         <div class="main-content-card">
@@ -162,21 +181,21 @@
         const searchInput = document.getElementById('searchInput');
         const clearSearchBtn = document.getElementById('clearSearchBtn');
 
-        // Event listener saat mengetik di search bar
         searchInput.addEventListener('keyup', function(event) {
-            // Tampilkan tombol 'X' jika ada teks
             clearSearchBtn.style.display = this.value.length > 0 ? 'block' : 'none';
-
-            // Kirim request search saat tombol 'Enter' ditekan
             if (event.key === 'Enter') {
                 const currentUrl = new URL(window.location.href);
-                // Set parameter 'search' dengan nilai dari input
                 currentUrl.searchParams.set('search', this.value);
-                // Hapus parameter 'page' untuk kembali ke halaman pertama hasil pencarian
                 currentUrl.searchParams.delete('page');
-                // Arahkan browser ke URL baru
                 window.location.href = currentUrl.toString();
             }
+        });
+        
+        clearSearchBtn.addEventListener('click', function() {
+            const currentUrl = new URL(window.location.href);
+            currentUrl.searchParams.delete('search');
+            currentUrl.searchParams.delete('page');
+            window.location.href = currentUrl.toString();
         });
         
         // Event listener saat tombol 'X' diklik
