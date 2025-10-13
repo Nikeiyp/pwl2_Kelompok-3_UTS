@@ -234,7 +234,7 @@
             if (selectedProductId && productsData[selectedProductId]) {
                 const product = productsData[selectedProductId];
                 row.dataset.price = product.price;
-                // Saat mengedit, jika user mengganti produk, kita gunakan stok asli dari produk baru
+                // Saat mengganti produk, stok yang tersedia adalah stok asli dari produk baru
                 row.dataset.stock = product.stock; 
                 unitPriceElement.textContent = `Rp ${product.price.toLocaleString('id-ID')}`;
                 
@@ -258,6 +258,7 @@
         }
     });
 
+    // Panggil calculateGrandTotal saat halaman dimuat untuk menghitung subtotal awal
     document.addEventListener('DOMContentLoaded', calculateGrandTotal);
 </script>
 </body>

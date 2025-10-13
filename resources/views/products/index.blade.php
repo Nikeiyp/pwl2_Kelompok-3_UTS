@@ -8,56 +8,31 @@
     <link rel="stylesheet" href="{{ asset('css/transaction.css') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
-<<<<<<< Updated upstream
 <body style="background: lightgray">
 
-<<<<<<< HEAD
-    
-=======
 <body>
+    
     <nav class="navbar navbar-expand-lg navbar-light bg-light mb-4">
-        <div class="container-fluid">
-            <a class="navbar-brand" href="#">UTS Project</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                    <li class="nav-item">
-                        <a class="nav-link active" aria-current="page" href="{{ route('products.index') }}">Products</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">Supplier</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ route('category_products.index') }}">Category Products</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ route('transactions.index') }}">Transactions</a>
-=======
-    <nav class="navbar navbar-expand-lg navbar-light bg-light mb-4">
-        <div class="container-fluid">
-            <a class="navbar-brand" href="#">UTS Project</a>
-            <div class="collapse navbar-collapse">
-                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ route('products.index') }}">Produk</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ route('suppliers.index') }}">Supplier</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">Transaksi</a>
->>>>>>> a2238f45693b4eeb457f229155c93c6f1ce4be81
-                    </li>
-                </ul>
+            <div class="container-fluid">
+                <a class="navbar-brand" href="#">UTS Project</a>
+                <div class="collapse navbar-collapse">
+                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ route('products.index') }}">Products</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">Supplier</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ route('category_products.index') }}">Category Products</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ route('transactions.index') }}">Transactions</a>
+                        </li>
+                    </ul>
+                </div>
             </div>
-        </div>
-    </nav>
-<<<<<<< HEAD
->>>>>>> Stashed changes
-=======
->>>>>>> a2238f45693b4eeb457f229155c93c6f1ce4be81
+        </nav>  
 
     <div class="container mt-5">
         <div class="main-content-card">
