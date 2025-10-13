@@ -19,13 +19,30 @@ class ProductController extends Controller
      *
      * @return View
      */
-    public function index(): View
-    {
-        $product = new Product;
-        $products = $product->get_product()->latest()->paginate(10);
+    public function index(Request $request): View
+{
+    // Mulai dengan metode get_product() dari model Anda yang sudah melakukan join
+    $product_model = new Product;
+    $productsQuery = $product_model->get_product();
 
-        return view('products.index', compact('products'));
+    // Terapkan logika pencarian pada query yang sudah di-join
+    if ($request->filled('search')) {
+        $searchTerm = $request->input('search');
+        $productsQuery->where(function($query) use ($searchTerm) {
+            $query->where('products.title', 'like', '%' . $searchTerm . '%')
+                  // GANTI 'cp' menjadi 'category_product'
+                  ->orWhere('category_product.product_category_name', 'like', '%' . $searchTerm . '%') 
+                  // GANTI 's' menjadi 'supplier'
+                  ->orWhere('supplier.supplier_name', 'like', '%' . $searchTerm . '%');
+        });
     }
+
+    // Ambil hasil akhir dengan pagination
+    $products = $productsQuery->latest('products.created_at')->paginate(10);
+
+    return view('products.index', compact('products'));
+}
+
 
     /**
      * create

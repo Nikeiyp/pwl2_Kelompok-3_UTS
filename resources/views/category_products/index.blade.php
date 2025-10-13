@@ -3,27 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Product Management</title>
+    <title>Category Management</title>
+    {{-- Bootstrap CSS --}}
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    {{-- Custom CSS yang sudah ada --}}
     <link rel="stylesheet" href="{{ asset('css/transaction.css') }}">
+    {{-- Font Awesome for Icons --}}
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
-<<<<<<< Updated upstream
-<body style="background: lightgray">
-
-    
-=======
 <body>
     <nav class="navbar navbar-expand-lg navbar-light bg-light mb-4">
         <div class="container-fluid">
             <a class="navbar-brand" href="#">UTS Project</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
+            <div class="collapse navbar-collapse">
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                     <li class="nav-item">
-                        <a class="nav-link active" aria-current="page" href="{{ route('products.index') }}">Products</a>
+                        <a class="nav-link" href="{{ route('products.index') }}">Products</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="#">Supplier</a>
@@ -38,23 +33,23 @@
             </div>
         </div>
     </nav>
->>>>>>> Stashed changes
 
     <div class="container mt-5">
         <div class="main-content-card">
             <div class="top-header">
-                <h3>Product Management</h3>
+                <h3>Category Management</h3>
                 <div class="search-bar-new">
                     <i class="fa-solid fa-search"></i>
-                    <input type="text" id="searchInput" name="search" placeholder="Search products..." class="form-control" value="{{ request('search') }}">
+                    <input type="text" id="searchInput" name="search" placeholder="Search categories..." class="form-control" value="{{ request('search') }}">
                     <span class="clear-search-btn" id="clearSearchBtn" style="{{ request('search') ? 'display:block;' : 'display:none;' }}">&times;</span>
                 </div>
             </div>
 
+            {{-- Kontrol Tabel: Tombol Add --}}
             <div class="table-controls">
-                <a href="{{ route('products.create') }}" class="btn add-btn">
+                <a href="{{ route('category_products.create') }}" class="btn add-btn">
                     <i class="fa-solid fa-plus"></i>
-                    Add New Product
+                    Add New Category
                 </a>
             </div>
 
@@ -62,38 +57,27 @@
                 <table class="table">
                     <thead>
                         <tr>
-                            <th>Image</th>
-                            <th>Title</th>
-                            <th>Category</th>
-                            <th>Supplier</th>
-                            <th>Price</th>
-                            <th>Stock</th>
+                            <th>ID</th>
+                            <th>Category Name</th>
+                            <th>Created At</th>
                             <th class="text-center">Actions</th>
                         </tr>
                     </thead>
                     <tbody>
-                        @forelse ($products as $product)
+                        @forelse ($category_products as $category)
                             <tr>
-                                <td>
-                                    <img src="{{ asset('/storage/images/'.$product->image) }}" class="rounded" style="width: 80px; height: 80px; object-fit: cover;">
-                                </td>
-                                <td><strong>{{ $product->title }}</strong></td>
-                                <td>{{ $product->product_category_name ?? '-' }}</td>
-                                <td>{{ $product->supplier_name ?? '-' }}</td>
-                                <td>Rp {{ number_format($product->price, 0, ',', '.') }}</td>
-                                <td>{{ $product->stock }}</td>
+                                <td><strong>#{{ $category->id }}</strong></td>
+                                <td>{{ $category->product_category_name }}</td>
+                                <td>{{ $category->created_at ? $category->created_at->format('d F Y') : '-' }}</td>
                                 <td class="text-center">
                                     <div class="action-icons">
-                                        <a href="{{ route('products.show', $product->id) }}" title="Show Details">
-                                            <i class="fa-solid fa-eye"></i>
-                                        </a>
-                                        <a href="{{ route('products.edit', $product->id) }}" title="Edit Product">
+                                        <a href="{{ route('category_products.edit', $category->id) }}" title="Edit Category">
                                             <i class="fa-solid fa-pencil"></i>
                                         </a>
-                                        <form class="d-inline" action="{{ route('products.destroy', $product->id) }}" method="POST">
+                                        <form class="d-inline" action="{{ route('category_products.destroy', $category->id) }}" method="POST">
                                             @csrf
                                             @method('DELETE')
-                                            <button type="submit" class="btn-delete" title="Delete Product" data-name="{{ $product->title }}">
+                                            <button type="submit" class="btn-delete" title="Delete Category" data-name="{{ $category->product_category_name }}">
                                                 <i class="fa-solid fa-trash-can"></i>
                                             </button>
                                         </form>
@@ -102,9 +86,9 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="7" class="text-center">
+                                <td colspan="4" class="text-center">
                                     <div class="alert alert-secondary mt-3">
-                                        No Product Data Available.
+                                        No Category Data Available.
                                     </div>
                                 </td>
                             </tr>
@@ -113,15 +97,18 @@
                 </table>
             </div>
 
+            {{-- Pagination --}}
             <div class="d-flex justify-content-center mt-4">
-                {{-- Tambahkan appends(request()->query()) agar search term tidak hilang saat pindah halaman --}}
-                {{ $products->appends(request()->query())->links() }}
+                {{ $category_products->links() }}
             </div>
+
         </div>
     </div>
 
+    {{-- Scripts --}}
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
     <script>
         // SweetAlert untuk pesan sukses
         @if(session('success'))
@@ -139,11 +126,12 @@
         deleteButtons.forEach(button => {
             button.addEventListener('click', function (e) {
                 e.preventDefault();
+                
                 const dataName = this.getAttribute('data-name');
                 const form = this.closest('form');
 
                 Swal.fire({
-                    title: `Delete product "${dataName}"?`,
+                    title: `Delete category "${dataName}"?`,
                     text: "You won't be able to revert this!",
                     icon: 'warning',
                     showCancelButton: true,
@@ -159,34 +147,31 @@
             });
         });
 
+        // Script untuk Search Bar
         const searchInput = document.getElementById('searchInput');
         const clearSearchBtn = document.getElementById('clearSearchBtn');
 
-        // Event listener saat mengetik di search bar
         searchInput.addEventListener('keyup', function(event) {
-            // Tampilkan tombol 'X' jika ada teks
             clearSearchBtn.style.display = this.value.length > 0 ? 'block' : 'none';
-
-            // Kirim request search saat tombol 'Enter' ditekan
             if (event.key === 'Enter') {
                 const currentUrl = new URL(window.location.href);
-                // Set parameter 'search' dengan nilai dari input
                 currentUrl.searchParams.set('search', this.value);
-                // Hapus parameter 'page' untuk kembali ke halaman pertama hasil pencarian
                 currentUrl.searchParams.delete('page');
-                // Arahkan browser ke URL baru
                 window.location.href = currentUrl.toString();
             }
         });
         
-        // Event listener saat tombol 'X' diklik
         clearSearchBtn.addEventListener('click', function() {
             const currentUrl = new URL(window.location.href);
-            // Hapus parameter 'search' dan 'page' dari URL
             currentUrl.searchParams.delete('search');
             currentUrl.searchParams.delete('page');
-            // Arahkan browser ke URL yang sudah bersih (halaman awal)
             window.location.href = currentUrl.toString();
+        });
+
+        document.addEventListener('DOMContentLoaded', function() {
+            if (searchInput.value.length > 0) {
+                clearSearchBtn.style.display = 'block';
+            }
         });
     </script>
 </body>

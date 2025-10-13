@@ -3,131 +3,93 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Edit Products</title>
+    <title>Edit Product</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ asset('css/transaction-form.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/transaction.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
-<body style="background: lightgray">
-
-    <div class="container mt-5 mb-5">
-        <div class="row">
-            <div class="col-md-12">
-                <h4>Edit Product</h4>
-                <div class="card border-0 shadow-sm rounded">
-                    <div class="card-body">
-                        <form action="{{ route('products.update', $data['product']->id) }}" method="POST" enctype="multipart/form-data">
-                        
-                            @csrf
-                            @method('PUT')
-
-                            <div class="form-group mb-3">
-                                <label class="font-weight-bold">IMAGE</label>
-                                <input type="file" class="form-control @error('image') is-invalid @enderror" name="image">
-                            
-                                @error('image')
-                                    <div class="alert alert-danger mt-2">
-                                        {{ $message }}
-                                    </div>
-                                @enderror
-                            </div>
-
-                            <div class="form-group mb-3">
-                                <label for="product_category_id">Product Category</label>
-                                <select class="form-control" id="product_category_id" name="product_category_id">
-                                    <option value="">-- Select Category Product --</option>
-                                    @foreach ($data['categories'] as $category)
-                                        <option value="{{ $category->id }}"
-                                        @if(old('product_category_id', $data['product']->product_category_id) == $category->id) selected @endif >
-                                        {{ $category->product_category_name }}</option>
-                                    @endforeach
-                                </select>
-                                @error('product_category_id')
-                                    <div class="alert alert-danger mt-2">
-                                        {{ $message }}
-                                    </div>
-                                @enderror
-                            </div>
-
-                            <div class="form-group mb-3">
-                                <label for="supplier_id">Supplier</label>
-                                <select class="form-control" id="supplier_id" name="supplier_id">
-                                    <option value="">-- Select Supplier --</option>
-                                    @foreach ($data['suppliers_'] as $supplier)
-                                        <option value="{{ $supplier->id }}" @if(old('supplier_id', $data['product']->supplier_id) == $supplier->id)
-                                        selected @endif >{{ $supplier->supplier_name }}</option>
-                                    @endforeach
-                                </select>
-                                @error('id_supplier')
-                                    <div class="alert alert-danger mt-2">
-                                        {{ $message }}
-                                    </div>
-                                @enderror
-                            </div>
-                            
-                            <div class="form-group mb-3">
-                                <label class="font-weight-bold">TITLE</label>
-                                <input type="text" class="form-control @error('title') is-invalid @enderror" name="title" value="{{ old('title', $data['product']->title) }}" placeholder="Masukkan Judul Product">
-                            
-                                @error('title')
-                                    <div class="alert alert-danger mt-2">
-                                        {{ $message }}
-                                    </div>
-                                @enderror
-                            </div>
-                            
-                            <div class="form-group mb-3">
-                                <label class="font-weight-bold">DESCRIPTION</label>
-                                <textarea class="form-control @error('description') is-invalid @enderror" name="description" rows="5"
-                                placeholder="Masukkan Description Product">{{ old('description', $data['product']->description) }}</textarea>
-                            
-                                @error('description')
-                                    <div class="alert alert-danger mt-2">
-                                        {{ $message }}
-                                    </div>
-                                @enderror
-                            </div>
-
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <div class="form-group mb-3">
-                                        <label class="font-weight-bold">PRICE</label>
-                                        <input type="number" class="form-control @error('price') is-invalid @enderror" name="price" value="{{ old('price', $data['product']->price) }}" placeholder="Masukkan Harga Product">
-                                    
-                                        @error('price')
-                                            <div class="alert alert-danger mt-2">
-                                                {{ $message }}
-                                            </div>
-                                        @enderror
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="form-group mb-3">
-                                        <label class="font-weight-bold">STOCK</label>
-                                        <input type="number" class="form-control @error('stock') is-invalid @enderror" name="stock" value="{{ old('stock', $data['product']->stock) }}" placeholder="Masukkan Stock Product">
-                                    
-                                        @error('stock')
-                                            <div class="alert alert-danger mt-2">
-                                                {{ $message }}
-                                            </div>
-                                        @enderror
-                                    </div>
-                                </div>
-                            </div>
-
-                            <button type="submit" class="btn btn-md btn-primary me-3">UPDATE</button>
-                            <button type="reset" class="btn btn-md btn-warning">RESET</button>
-
-                        </form> 
+<body>
+    <div class="container my-5">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="form-card">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                         <h3>Edit Product</h3>
+                         <a href="{{ route('products.index') }}" class="btn btn-cancel">
+                            <i class="fa-solid fa-arrow-left me-2"></i>Back to List
+                        </a>
                     </div>
+                    
+                    @if ($errors->any())
+                        <div class="alert alert-danger">
+                            <ul class="mb-0">
+                                @foreach ($errors->all() as $error)
+                                    <li>{{ $error }}</li>
+                                @endforeach
+                            </ul>
+                        </div>
+                    @endif
+
+                    <form action="{{ route('products.update', $data['product']->id) }}" method="POST" enctype="multipart/form-data">
+                        @csrf
+                        @method('PUT')
+
+                        <div class="mb-4">
+                            <label for="title" class="form-label">Product Name</label>
+                            <input type="text" id="title" class="form-control" name="title" value="{{ old('title', $data['product']->title) }}" required>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-4">
+                                <label for="product_category_id" class="form-label">Category</label>
+                                <select id="product_category_id" name="product_category_id" class="form-select" required>
+                                    @foreach ($data['categories'] as $category)
+                                        <option value="{{ $category->id }}" {{ old('product_category_id', $data['product']->product_category_id) == $category->id ? 'selected' : '' }}>{{ $category->product_category_name }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="col-md-6 mb-4">
+                                <label for="supplier_id" class="form-label">Supplier</label>
+                                <select id="supplier_id" name="supplier_id" class="form-select" required>
+                                    @foreach ($data['suppliers_'] as $supplier)
+                                        <option value="{{ $supplier->id }}" {{ old('supplier_id', $data['product']->supplier_id) == $supplier->id ? 'selected' : '' }}>{{ $supplier->supplier_name }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="description" class="form-label">Description</label>
+                            <textarea id="description" name="description" class="form-control" rows="4" required>{{ old('description', $data['product']->description) }}</textarea>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-4">
+                                <label for="price" class="form-label">Price</label>
+                                <input type="number" id="price" name="price" class="form-control" value="{{ old('price', $data['product']->price) }}" required>
+                            </div>
+                            <div class="col-md-6 mb-4">
+                                <label for="stock" class="form-label">Stock</label>
+                                <input type="number" id="stock" name="stock" class="form-control" value="{{ old('stock', $data['product']->stock) }}" required>
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="image" class="form-label">Product Image (leave empty if not changed)</label>
+                            <input type="file" id="image" name="image" class="form-control">
+                            <small class="form-text text-muted">Current image:</small><br>
+                            <img src="{{ asset('/storage/images/'.$data['product']->image) }}" class="rounded mt-2" style="width: 150px;">
+                        </div>
+                        
+                        <div class="form-actions">
+                            <a href="{{ route('products.index') }}" class="btn btn-cancel">Cancel</a>
+                            <button type="submit" class="btn btn-save">Update Product</button>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>
     </div>
-    
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://cdn.ckeditor.com/4.13.1/standard/ckeditor.js"></script>
-    <script>
-        CKEDITOR.replace('description');
-    </script>
 </body>
 </html>
