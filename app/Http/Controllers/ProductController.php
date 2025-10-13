@@ -55,13 +55,13 @@ class ProductController extends Controller
         // var_dump($request);exit;
         //validate form
         $validatedData = $request->validate([
-            'image'             => 'required|image|mimes:jpeg,jpg,png|max:2048',
-            'title'             => 'required|min:5',
-            'product_category_id' => 'required|integer',
-            'supplier_id'        => 'required|integer',
-            'description'       => 'required|string',
-            'price'             => 'required|numeric',
-            'stock'             => 'required|numeric'
+            'image'                 => 'required|image|mimes:jpeg,jpg,png|max:2048',
+            'title'                 => 'required|min:5',
+            'product_category_id'   => 'required|integer',
+            'supplier_id'           => 'required|exists:supplier,id',
+            'description'           => 'required|string',
+            'price'                 => 'required|numeric',
+            'stock'                 => 'required|numeric'
         ]);
 
         // Menangani upload file gambar
@@ -130,7 +130,7 @@ class ProductController extends Controller
         $request->validate([
             'image'       => 'image|mimes:jpeg,jpg,png|max:2048',
             'title'       => 'required|min:5',
-            'description' => 'required|min:10',
+            'deskripsi' => 'required|min:10',
             'price'       => 'required|numeric',
             'stock'       => 'required|numeric'
         ]);
@@ -159,7 +159,7 @@ class ProductController extends Controller
             'title'               => $request->title,
             'product_category_id' => $request->product_category_id,
             'supplier_id'         => $request->supplier_id,
-            'description'         => $request->description,
+            'description'         => $request->deskripsi,
             'price'               => $request->price,
             'stock'               => $request->stock
         ];

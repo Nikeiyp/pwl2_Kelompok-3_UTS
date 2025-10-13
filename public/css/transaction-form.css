@@ -1,0 +1,115 @@
+/* public/css/transaction-form.css */
+.form-card {
+    background-color: #fff;
+    padding: 2rem;
+    border-radius: 16px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.07);
+}
+
+.form-card h3 {
+    font-weight: 600;
+    margin-bottom: 2rem;
+}
+
+.form-label {
+    font-weight: 500;
+    color: #555;
+    margin-bottom: 0.5rem;
+}
+
+.form-control, .form-select {
+    border-radius: 8px;
+    border: 1px solid #e0e0e0;
+    padding: 0.75rem 1rem;
+    background-color: #f8f9fa;
+}
+
+.form-control:focus, .form-select:focus {
+    background-color: #fff;
+    border-color: #86b7fe;
+    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+}
+
+.form-control[readonly] {
+    background-color: #e9ecef;
+    opacity: 1;
+}
+
+/* Bagian Produk */
+#product-rows-header, .product-row {
+    display: grid;
+    grid-template-columns: 4fr 2fr 2fr 2fr 1fr; /* Pembagian kolom */
+    gap: 1rem;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+#product-rows-header {
+    font-weight: 600;
+    color: #888;
+    text-transform: uppercase;
+    font-size: 0.9rem;
+    border-bottom: 1px solid #e9ecef;
+    padding-bottom: 0.5rem;
+}
+
+.product-row .form-control, .product-row .form-select {
+    padding: 0.5rem 0.75rem; /* Padding lebih kecil untuk input di baris produk */
+}
+
+.unit-price-text, .subtotal-text {
+    font-weight: 500;
+}
+
+.btn-remove-product {
+    background: #f8d7da;
+    color: #842029;
+    border: none;
+    border-radius: 50%;
+    width: 32px;
+    height: 32px;
+    font-weight: bold;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.btn-remove-product:hover {
+    background: #c94848;
+}
+
+/* Tombol Aksi */
+.form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+    margin-top: 2rem;
+    align-items: center;
+}
+
+#grand-total-display {
+    font-size: 1.25rem;
+    font-weight: 600;
+}
+
+.btn-save {
+    background-color: #759438;
+    color: white;
+    font-weight: 500;
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+}
+.btn-save:hover {
+    background-color: #60792d;
+    color: white;
+}
+
+.btn-cancel {
+    background-color: #e9ecef;
+    color: #333;
+    font-weight: 500;
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+}
+.btn-cancel:hover {
+    background-color: #d8dbe0;
+}

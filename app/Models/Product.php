@@ -3,7 +3,9 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use App\Models\Supplier; 
+use App\Models\Category_product;
 
 class Product extends Model
 {
@@ -24,6 +26,27 @@ class Product extends Model
         'stock',
         
     ];
+
+       /**
+     * Relasi ke Supplier. 
+     * Ini yang dibutuhkan oleh DashboardController (->with('supplier')).
+     */
+        public function supplier(): BelongsTo
+        {
+            // Asumsi: foreign key di tabel products adalah 'supplier_id'
+            return $this->belongsTo(Supplier::class, 'supplier_id');
+        }
+
+    /**
+     * Relasi ke Kategori Produk. 
+     * (Berguna jika Anda ingin mengakses category_product_name).
+     */
+    public function category(): BelongsTo
+    {
+        // Asumsi: foreign key di tabel products adalah 'product_category_id'
+        // dan nama Model kategori Anda adalah ProductCategory
+        return $this->belongsTo(Category_product::class, 'category_product_id');
+    }
 
     public function get_product()
     {
@@ -79,16 +102,10 @@ class Product extends Model
         } else {
             return "tidak ada data yang diupdate";
         }
-}
 
+     
 
-
-
-
-
-
-
-
+    }
 
 
     
