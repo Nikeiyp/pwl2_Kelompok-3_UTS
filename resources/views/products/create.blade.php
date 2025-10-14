@@ -96,6 +96,7 @@
                 CKEDITOR.instances[instance].setData(''); // Reset CKEditor content
             }
         }
+        
     </script>
 </body>
 </html>
