@@ -9,10 +9,20 @@ use Illuminate\Http\RedirectResponse;
 
 class SupplierController extends Controller
 {
-    public function index(): View
+    public function index(Request $request): View
     {
-        $suppliers = Supplier::latest()->paginate(10);
-        return view('suppliers.index', compact('suppliers'));
+        $suppliersQuery = Supplier::query();
+
+    if ($request->filled('search')) {
+        $searchTerm = $request->input('search');
+        $suppliersQuery->where('supplier_name', 'like', '%' . $searchTerm . '%')
+                       ->orWhere('pic_supplier', 'like', '%' . $searchTerm . '%')
+                       ->orWhere('supplier_email', 'like', '%' . $searchTerm . '%');
+    }
+
+    $suppliers = $suppliersQuery->latest()->paginate(10);
+
+    return view('suppliers.index', compact('suppliers'));
     }
 
     public function create(): View
@@ -23,15 +33,14 @@ class SupplierController extends Controller
     public function store(Request $request): RedirectResponse
     {
 
-        $request->validate([
-            'supplier_name' => 'required|min:3',
-            'pic_supplier'  => 'required|min:3',
+         $request->validate([
+            'supplier_name'    => 'required|min:3',
+            'pic_supplier'     => 'nullable|string', // nullable berarti boleh kosong
+            'supplier_email'   => 'nullable|email',
+            'supplier_phone'   => 'nullable|numeric',
+            'supplier_address' => 'nullable|string',
         ]);
-
-        Supplier::create([
-            'supplier_name' => $request->supplier_name,
-            'pic_supplier'  => $request->pic_supplier,
-        ]);
+        Supplier::create($request->all());
 
         return redirect()->route('suppliers.index')->with(['success' => 'Data Supplier Berhasil Disimpan!']);
     }
@@ -48,16 +57,15 @@ class SupplierController extends Controller
 
     public function update(Request $request, Supplier $supplier): RedirectResponse
     {
-
+        // 1. Validasi semua input
         $request->validate([
-            'supplier_name' => 'required|min:3',
-            'pic_supplier'  => 'required|min:3',
+            'supplier_name'    => 'required|min:3',
+            'pic_supplier'     => 'nullable|string', // nullable berarti boleh kosong
+            'supplier_email'   => 'nullable|email',
+            'supplier_phone'   => 'nullable|numeric',
+            'supplier_address' => 'nullable|string',
         ]);
-
-        $supplier->update([
-            'supplier_name' => $request->supplier_name,
-            'pic_supplier'  => $request->pic_supplier,
-        ]);
+        $supplier->update($request->all());
 
         return redirect()->route('suppliers.index')->with(['success' => 'Data Supplier Berhasil Diubah!']);
     }

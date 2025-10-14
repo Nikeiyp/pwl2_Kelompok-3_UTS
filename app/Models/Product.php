@@ -71,4 +71,9 @@ class Product extends Model
             return "tidak ada data yang diupdate";
         }
     }
+
+     public function supplier()
+    {
+        return $this->belongsTo(Supplier::class);
+    }
 }

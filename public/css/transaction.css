@@ -1,4 +1,4 @@
-/* public/css/style.css */
+/* public/css/transaction.css */
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
 
 body {
@@ -6,6 +6,48 @@ body {
     background-color: #f4f7f6;
     margin: 0;
     padding: 0;
+}
+
+
+.sidebar {
+    
+    width: 260px;
+    height: 100vh;
+    position: fixed;
+    top: 0;
+    left: 0;
+    background-color: #1A0701;
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    padding-top: 1rem;
+}
+
+.sidebar .brand {
+    font-size: 1.4rem;
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 1.5rem;
+    border-bottom: 1px solid rgba(255,255,255,0.2);
+    padding-bottom: 1rem;
+}
+
+.sidebar .nav-link {
+    color: #f8f9fa;
+    padding: 12px 18px;
+    display: flex;
+    align-items: center;
+    transition: 0.2s;
+}
+
+.sidebar .nav-link i {
+    width: 22px;
+}
+
+.sidebar .nav-link:hover,
+.sidebar .nav-link.active {
+    background-color: #495057;
+    border-radius: 5px;
 }
 
 .container-fluid {
@@ -100,11 +142,11 @@ body {
     text-decoration: none;
     border: none;
     cursor: pointer;
-    transition: background-color 0.2s ease-in-out;
+    transition: background-color 0.2s ease-in-out; /* TRANSISI DI SINI */
 }
 
 .add-btn:hover {
-    background-color: #60792d;
+    background-color: #60792d; /* Warna lebih gelap saat hover */
     color: white;
 }
 
@@ -186,7 +228,7 @@ body {
     border-radius: 50%;
     color: #6c757d;
     cursor: pointer;
-    transition: background-color 0.2s, color 0.2s;
+    transition: background-color 0.2s, color 0.2s; /* TRANSISI DI SINI */
     display: flex;
     justify-content: center;
     align-items: center;
@@ -224,4 +266,20 @@ body {
 .status-pending {
     background-color: #ffedd5;
     color: #9a3412;
+}
+
+/* === MAIN CONTENT (Tambahan dari layout app, tapi lebih baik taruh di sini) === */
+.main-content {
+    margin-left: 260px;
+    padding: 2rem;
+}
+
+.page-title {
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+}
+
+.card { /* Ini jika ada card lain di luar main-content-card */
+    border: none;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.1);
 }

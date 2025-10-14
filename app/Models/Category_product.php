@@ -10,6 +10,10 @@ class Category_product extends Model
     use HasFactory;
     protected $table = 'category_product';
 
+    protected $fillable = [
+        'product_category_name',
+    ];
+
     public function get_category_product()
     {
         $sql = $this->select("*");

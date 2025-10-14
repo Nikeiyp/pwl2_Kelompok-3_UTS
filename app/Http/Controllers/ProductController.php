@@ -122,7 +122,7 @@ class ProductController extends Controller
         $category_product = new Category_product;
         $supplier = new Supplier;
         $data['categories'] = $category_product->get_category_product()->get();
-        $data['suppliers_'] = $supplier->get_supplier();
+        $data['suppliers'] = $supplier->get_supplier();
    
         return view('products.edit', compact('data'));
     }

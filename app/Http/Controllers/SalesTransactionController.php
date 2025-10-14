@@ -17,32 +17,27 @@ class SalesTransactionController extends Controller
     {
        $transactions = SalesTransaction::query();
 
-        // 1. Filter Pencarian (Search)
         if ($request->filled('search')) {
             $searchTerm = $request->input('search');
             $transactions->where(function($query) use ($searchTerm) {
-                // Pastikan kolom yang dicari ada di tabel sales_transactions Anda
                 $query->where('cashier_name', 'like', '%' . $searchTerm . '%')
                       ->orWhere('customer_email', 'like', '%' . $searchTerm . '%')
                       ->orWhere('id', 'like', '%' . $searchTerm . '%');
             });
         }
 
-        // 2. Filter Tanggal (Date Filter)
         if ($request->filled('date_filter')) {
             $dateFilter = $request->input('date_filter');
-            $now = Carbon::now(); // Menggunakan instance Carbon yang sama
+            $now = Carbon::now();
 
             switch ($dateFilter) {
                 case 'today':
                     $transactions->whereDate('created_at', $now->toDateString());
                     break;
                 case 'last_7_days':
-                    // Clone $now agar tidak mempengaruhi perhitungan berikutnya
                     $transactions->whereBetween('created_at', [Carbon::now()->subDays(6)->startOfDay(), Carbon::now()->endOfDay()]);
                     break;
                 case 'last_month':
-                    // Clone $now agar tidak mempengaruhi perhitungan berikutnya
                     $transactions->whereMonth('created_at', Carbon::now()->subMonth()->month)
                                  ->whereYear('created_at', Carbon::now()->subMonth()->year); // Pastikan tahun juga disesuaikan untuk bulan lalu
                     break;
@@ -50,11 +45,10 @@ class SalesTransactionController extends Controller
                     $transactions->whereMonth('created_at', $now->month)
                                  ->whereYear('created_at', $now->year);
                     break;
-                // 'all_time' tidak perlu kondisi khusus karena itu default, jadi kita tidak melakukan apa-apa jika filter kosong atau bukan salah satu di atas
             }
         }
 
-        $transactions = $transactions->orderBy('created_at', 'desc')->paginate(10); // Atau jumlah yang Anda inginkan
+        $transactions = $transactions->orderBy('created_at', 'desc')->paginate(10);
 
         return view('transactions.index', compact('transactions'));
     }
@@ -62,8 +56,6 @@ class SalesTransactionController extends Controller
     public function create(): View
     {
         $products = Product::where('stock', '>', 0)->orderBy('title')->get();
-        
-        // Ubah baris ini agar stock juga masuk ke JSON
         $productsJson = $products->keyBy('id');
 
         return view('transactions.create', compact('products', 'productsJson'));
@@ -81,7 +73,6 @@ class SalesTransactionController extends Controller
         $grandTotal = 0;
         $transactionDetails = [];
 
-        // Hitung total dan siapkan detailnya terlebih dahulu
         foreach ($request->products as $item) {
             $product = Product::find($item['id']);
             $price = $product->price;
@@ -94,13 +85,10 @@ class SalesTransactionController extends Controller
                 'price'      => $price,
                 'subtotal'   => $subtotal,
             ];
-
-            // Update stok
             $product->stock = $product->stock - $item['quantity'];
             $product->save();
         }
         
-        // Buat transaksi utama dengan grand total
         $transaction = SalesTransaction::create([
             'cashier_name'    => $request->cashier_name,
             'customer_email'  => $request->customer_email,
@@ -117,12 +105,8 @@ class SalesTransactionController extends Controller
 
     public function show(string $id): View
     {
-        // Find the transaction and automatically fetch all related details
-        // and the product for each detail. This is called "eager loading".
         $transaction = SalesTransaction::with('details.product')->findOrFail($id);
 
-        // Now, pass the single $transaction object to the view.
-        // The view will contain all the necessary data.
         return view('transactions.show', compact('transaction'));
     }
 

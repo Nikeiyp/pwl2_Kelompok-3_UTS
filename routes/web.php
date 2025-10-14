@@ -1,13 +1,21 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\ProductController;
+use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\SalesTransactionController;
+use App\Http\Controllers\CategoryProductController;
+use App\Http\Controllers\SupplierController;
 
 Route::get('/', function () {
     return view('welcome');
 });
 
-Route::resource('/products', \App\Http\Controllers\ProductController::class);
+// Route untuk Dashboard
+Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
-Route::resource('/category_products', \App\Http\Controllers\CategoryProductController::class);
-
-Route::resource('/transactions', \App\Http\Controllers\SalesTransactionController::class);
+// Resource Routes untuk CRUD
+Route::resource('/products', ProductController::class);
+Route::resource('/transactions', SalesTransactionController::class);
+Route::resource('/category_products', CategoryProductController::class);
+Route::resource('/suppliers', SupplierController::class);
