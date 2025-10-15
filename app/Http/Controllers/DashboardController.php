@@ -56,7 +56,6 @@ class DashboardController extends Controller
         $produkRendahStok = Product::where('stock', '<', $low_stock_threshold)
             ->orderBy('stock', 'asc')
             ->with('supplier')
-            ->limit(5)
             ->get();
 
         return view('dashboard.index', compact(

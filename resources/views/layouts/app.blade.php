@@ -17,7 +17,9 @@
 <body>
     {{-- SIDEBAR KIRI --}}
     <div class="sidebar">
-        <div class="brand">Admin Musik</div>
+       <div class="brand">
+            <img src="{{ asset('storage/images/logo.png') }}" alt="Logo" style="height: 100px;">
+        </div>
         <a href="{{ route('dashboard') }}" class="nav-link @if(request()->routeIs('dashboard')) active @endif">
             <i class="fas fa-chart-line me-2"></i> Dashboard
         </a>

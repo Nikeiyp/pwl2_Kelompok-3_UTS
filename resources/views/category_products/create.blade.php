@@ -26,7 +26,7 @@
                     @csrf
                     <div class="mb-4">
                         <label for="product_category_name" class="form-label">Category Name</label>
-                        <input type="text" id="product_category_name" class="form-control" name="product_category_name" value="{{ old('product_category_name') }}" placeholder="e.g., Smartphone" required>
+                        <input type="text" id="product_category_name" class="form-control" name="product_category_name" value="{{ old('product_category_name') }}" placeholder="" required>
                     </div>
                     
                     <div class="form-actions">

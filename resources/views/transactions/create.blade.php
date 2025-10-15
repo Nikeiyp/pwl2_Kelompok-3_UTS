@@ -27,7 +27,21 @@
                     <div class="row">
                         <div class="col-md-6 mb-4">
                             <label for="cashier_name" class="form-label">Cashier Name</label>
-                            <input type="text" id="cashier_name" class="form-control" name="cashier_name" value="{{ old('cashier_name') }}" required>
+    
+                                <select id="cashier_name" class="form-select" name="cashier_name" required>
+                                    <option value="" disabled selected>Choose Cahsier</option> 
+                                    
+                                    @php
+                                        $cashiers = ['Williams', 'Nikeisha', 'Louis', 'Agnes'];
+                                    @endphp
+                                    
+                                    @foreach ($cashiers as $name)
+                                        <option value="{{ $name }}" {{ old('cashier_name') == $name ? 'selected' : '' }}>
+                                            {{ $name }}
+                                        </option>
+                                    @endforeach
+                                    
+                                </select>
                         </div>
                         <div class="col-md-6 mb-4">
                             <label for="customer_email" class="form-label">Customer Email (Optional)</label>

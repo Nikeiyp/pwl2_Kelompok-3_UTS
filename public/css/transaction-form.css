@@ -113,3 +113,13 @@
 .btn-cancel:hover {
     background-color: #d8dbe0;
 }
+
+.pagination .page-item.active .page-link {
+    background-color: #A69DEE; 
+    border-color: #A69DEE;
+}
+
+.pagination .page-item .page-link {
+    color: #555; 
+}
+
