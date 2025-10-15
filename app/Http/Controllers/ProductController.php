@@ -2,31 +2,42 @@
 
 namespace App\Http\Controllers;
 
-
 use App\Models\Product;
-use Illuminate\View\View;
-use Illuminate\Http\Request;
 use App\Models\Category_product;
 use App\Models\Supplier;
+
+use Illuminate\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Http\Request;
+
 
 class ProductController extends Controller
 {
     /**
      * index
      *
-     * @return void
+     * @return View
      */
-    public function index(): View
-    {
-        //get all products
-        $product = new Product;
-        $products = $product->get_product()->latest()->paginate(10);
+    public function index(Request $request): View
+{
+   
+    $product_model = new Product;
+    $productsQuery = $product_model->get_product();
 
-        //render view with products
-        return view('products.index', compact('products'));
+    if ($request->filled('search')) {
+        $searchTerm = $request->input('search');
+        $productsQuery->where(function($query) use ($searchTerm) {
+            $query->where('products.title', 'like', '%' . $searchTerm . '%')
+                  ->orWhere('category_product.product_category_name', 'like', '%' . $searchTerm . '%') 
+                  ->orWhere('supplier.supplier_name', 'like', '%' . $searchTerm . '%');
+        });
     }
+
+    $products = $productsQuery->latest('products.created_at')->paginate(10);
+
+    return view('products.index', compact('products'));
+}
 
     /**
      * create
@@ -35,16 +46,16 @@ class ProductController extends Controller
      */
     public function create(): View
     {
-        $product = new Category_product;
-        $product2 = new Supplier;
+        $category_product = new Category_product;
+        $supplier = new Supplier;
 
-        $data['categories'] = $product->get_category_product()->get();
-        $data['suppliers'] = $product2->get_supplier()->get();
+        $data['categories'] = $category_product->get_category_product()->get();
+        $data['suppliers'] = $supplier->get_supplier();
 
         return view('products.create', compact('data'));
     }
 
-        /**
+    /**
      * store
      *
      * @param  mixed $request
@@ -52,40 +63,35 @@ class ProductController extends Controller
      */
     public function store(Request $request): RedirectResponse
     {
-        // var_dump($request);exit;
+        // var_dump($request); exit;
         //validate form
         $validatedData = $request->validate([
-            'image'                 => 'required|image|mimes:jpeg,jpg,png|max:2048',
-            'title'                 => 'required|min:5',
-            'product_category_id'   => 'required|integer',
-            'supplier_id'           => 'required|exists:supplier,id',
-            'description'           => 'required|string',
-            'price'                 => 'required|numeric',
-            'stock'                 => 'required|numeric'
+            'image' => 'required|image|mimes:jpeg,jpg,png|max:2048',    
+            'title' => 'required|min:5',
+            'supplier_id'   => 'required|integer',
+            'product_category_id' => 'required|integer',
+            'description' => 'required|min:10',
+            'price' => 'required|numeric',
+            'stock' => 'required|numeric'
         ]);
 
-        // Menangani upload file gambar
         if ($request->hasFile('image')) {
             $image = $request->file('image');
-            $store_image = $image->store('images', 'public'); // Simpan gambar ke folder penyimpanan
+            $store_image = $image->store('images', 'public');
 
-            $product = new Product;
+            $product = new product;
             $insert_product = $product->storeProduct($request, $image);
 
-            //redirect to index
             return redirect()->route('products.index')->with(['success' => 'Data Berhasil Disimpan!']);
         }
 
-        //redirect to index
         return redirect()->route('products.index')->with(['error' => 'Failed to upload image (request).']);
     }
 
     /**
-     * show
-     *
-     * @param  mixed $id
-     * @return View
-     */
+    * @param mixed Sid
+    * @return View
+    */
     public function show(string $id): View
     {
         //get product by ID
@@ -96,100 +102,86 @@ class ProductController extends Controller
         return view('products.show', compact('product'));
     }
 
-
     /**
-     * edit
-     *
-     * @param  mixed $id
-     * @return View
-     */
+    * edit
+    *
+    * @param mixed Sid
+    * @return View
+    */
     public function edit(string $id): View
     {
         //get product by ID
         $product_model = new Product;
         $data['product'] = $product_model->get_product()->where("products.id", $id)->firstOrFail();
-
-        $data['categories'] = Category_product::all();
-        $data['suppliers_'] = Supplier::all();
-
-        //render view with product
+        
+        $category_product = new Category_product;
+        $supplier = new Supplier;
+        $data['categories'] = $category_product->get_category_product()->get();
+        $data['suppliers'] = $supplier->get_supplier();
+   
         return view('products.edit', compact('data'));
     }
 
-
     /**
-     * update
-     *
-     * @param  mixed $request
-     * @param  mixed $id
-     * @return RedirectResponse
-     */
+    * update
+    *
+    * @param mixed $request
+    * @param mixed $id
+    * @return RedirectResponse
+    */
     public function update(Request $request, $id): RedirectResponse
     {
         //validate form
         $request->validate([
-            'image'       => 'image|mimes:jpeg,jpg,png|max:2048',
-            'title'       => 'required|min:5',
-            'deskripsi' => 'required|min:10',
-            'price'       => 'required|numeric',
-            'stock'       => 'required|numeric'
+            'image'         => 'image|mimes:jpeg,jpg,png|max:2048',
+            'title'         => 'required|min:5',
+            'description'   => 'required|min:10',
+            'price'         => 'required|numeric',
+            'stock'         => 'required|numeric'
         ]);
 
         //get product by ID
         $product_model = new Product;
+        $nama_gambar = null;
 
-        $name_image = null;
-    
-        //check if image is uploaded
         if ($request->hasFile('image')) {
-
-            //upload new image
+            
             $image = $request->file('image');
-            $store_image = $image->store('images', 'public'); // Simpan gambar ke folder penyimpanan
-            $name_image = $image->hashName();
+            $store_image = $image->store('images', 'public'); 
+            $nama_gambar = $image->hashName();
 
-            //cari data product berdasarkan id
             $data_product = $product_model->get_product()->where("products.id", $id)->firstOrFail();
-            //delete old image
-            Storage::disk('public')->delete('images/'. $data_product->image);
-        }
+            
+            Storage::disk('public')->delete('images/'.$data_product->image);
+            
+        } 
+            $request_data = [
+                'title'                 => $request->title,
+                'product_category_id'   => $request->product_category_id,
+                'supplier_id'           => $request->supplier_id,
+                'description'           => $request->deskripsi,
+                'price'                 => $request->price,
+                'stock'                 => $request->stock
+            ];
 
-        //update product with new image
-        $request = [
-            'title'               => $request->title,
-            'product_category_id' => $request->product_category_id,
-            'supplier_id'         => $request->supplier_id,
-            'description'         => $request->deskripsi,
-            'price'               => $request->price,
-            'stock'               => $request->stock
-        ];
+            $update_product = $product_model->updateProduct($id, $request, $nama_gambar);
 
-        $update_product = $product_model->updateProduct($id, $request, $name_image);
-
-        //redirect to index
         return redirect()->route('products.index')->with(['success' => 'Data Berhasil Diubah!']);
     }
 
     /**
-     * destroy
-     *
-     * @param  mixed $id
-     * @return RedirectResponse
-     */
+    * @param mixed Sid
+    * @return RedirectResponse
+    */
     public function destroy($id): RedirectResponse
     {
-        //get product by ID
         $product_model = new Product;
         $product = $product_model->get_product()->where("products.id", $id)->firstOrFail();
 
-        //delete old image
-        Storage::disk('public')->delete('images/' . $product->image);
+        Storage::disk('public')->delete('images/'.$product->image);
 
-        //delete product
         $product->delete();
 
-        //redirect to index
         return redirect()->route('products.index')->with(['success' => 'Data Berhasil Dihapus!']);
     }
-
 }

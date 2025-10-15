@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Http\Request;
 
 
 
@@ -19,13 +20,28 @@ class Supplier extends Model
     'supplier_phone', 
     'supplier_address'];
 
-
-
+    public function products()
+    {
+        return $this->hasMany(Product::class);
+    }
     
     public function get_supplier()
     {
-        // get all supplier
-        $sql = $this->select("*");
-        return $sql;
+        return $this->select("*")->get();
+    }
+
+    public static function storeSupplier(Request $request)
+    {
+        return self::create($request->all());
+    }
+
+    public static function updateSupplier($id, Request $request)
+    {
+        $supplier = self::find($id);
+        if ($supplier) {
+            $supplier->update($request->all());
+            return $supplier;
+        }
+        return null;
     }
 }

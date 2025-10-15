@@ -29,22 +29,17 @@ class Product extends Model
 
        /**
      * Relasi ke Supplier. 
-     * Ini yang dibutuhkan oleh DashboardController (->with('supplier')).
      */
         public function supplier(): BelongsTo
         {
-            // Asumsi: foreign key di tabel products adalah 'supplier_id'
             return $this->belongsTo(Supplier::class, 'supplier_id');
         }
 
     /**
      * Relasi ke Kategori Produk. 
-     * (Berguna jika Anda ingin mengakses category_product_name).
      */
     public function category(): BelongsTo
     {
-        // Asumsi: foreign key di tabel products adalah 'product_category_id'
-        // dan nama Model kategori Anda adalah ProductCategory
         return $this->belongsTo(Category_product::class, 'category_product_id');
     }
 
@@ -63,7 +58,6 @@ class Product extends Model
     }
         public static function storeProduct($request, $image)
         {
-        // Simpan produk baru menggunakan mass assignment
         return self::create([
             'image'               => $image->hashName(),
             'title'               => $request->title,

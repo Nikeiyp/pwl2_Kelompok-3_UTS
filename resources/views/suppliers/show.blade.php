@@ -1,48 +1,46 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Show Supplier</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-</head>
-<body style="background: lightgray">
+@extends('layouts.app')
 
-<div class="container mt-5 mb-5">
-    <div class="row">
-        <h3>Show Supplier</h3>
-        <div class="col-md-8 offset-md-2">
-            <div class="card border-0 shadow-sm rounded">
-                <div class="card-body">
+@section('content')
 
-                    <h4 class="mb-3">{{ $supplier->supplier_name }}</h4>
-                    <hr/>
-
-                    <p><strong>Pic Supplier:</strong> {{ $supplier->pic_supplier ?? '-' }}</p>
-                    <hr/>
-
-                    <p><strong>Email:</strong> {{ $supplier->supplier_email ?? '-' }}</p>
-                    <hr/>
-
-                    <p><strong>Phone:</strong> {{ $supplier->supplier_phone ?? '-' }}</p>
-                    <hr/>
-
-                    <p><strong>Address:</strong> {{ $supplier->supplier_address ?? '-' }}</p>
-                    <hr/>
-
-                    <p><strong>Dibuat pada:</strong> {{ $supplier->created_at ? $supplier->created_at->format('d M Y, H:i') : '-' }}</p>
-                    <p><strong>Terakhir diupdate:</strong> {{ $supplier->updated_at ? $supplier->updated_at->format('d M Y, H:i') : '-' }}</p>
-
-                    <hr/>
-                    <a href="{{ route('suppliers.index') }}" class="btn btn-secondary btn-sm">Kembali</a>
-
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="form-card">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h3>Supplier Detail</h3>
+                    <a href="{{ route('suppliers.index') }}" class="btn btn-cancel">
+                        <i class="fa-solid fa-arrow-left me-2"></i>Back to List
+                    </a>
                 </div>
+                
+                <h2 class="mb-4">{{ $supplier->supplier_name }}</h2>
+                <hr>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Person In Charge (PIC)</label>
+                        <p class="fs-5"><strong>{{ $supplier->pic_supplier ?? '-' }}</strong></p>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Email</label>
+                        <p class="fs-5"><strong>{{ $supplier->supplier_email ?? '-' }}</strong></p>
+                    </div>
+                </div>
+                 <hr>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Phone</label>
+                        <p class="fs-5"><strong>{{ $supplier->supplier_phone ?? '-' }}</strong></p>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Address</label>
+                        <p class="fs-5"><strong>{{ $supplier->supplier_address ?? '-' }}</strong></p>
+                    </div>
+                </div>
+                 <hr>
+                 <div>
+                     <label class="form-label">Registered On</label>
+                     <p class="fs-5"><strong>{{ $supplier->created_at ? $supplier->created_at->format('d F Y') : '-' }}</strong></p>
+                 </div>
             </div>
         </div>
     </div>
-</div>
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-</body>
-</html>
+@endsection

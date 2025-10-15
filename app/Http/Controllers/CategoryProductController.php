@@ -15,7 +15,7 @@ class CategoryProductController extends Controller
         
         if ($request->filled('search')) {
             $searchTerm = $request->input('search');
-            $category_products->where('product_category_wname', 'like', '%' . $searchTerm . '%');
+            $category_products->where('product_category_name', 'like', '%' . $searchTerm . '%');
         }
 
         $category_products = $category_products->latest()->paginate(10);

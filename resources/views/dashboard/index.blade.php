@@ -4,45 +4,22 @@
 
 @section('content')
 
-<style>
-
-
-
-.btn-custom {
-    background-color: #5A2708;
-    border-color: #759438;
-    color: #fff;
-}
-
-.btn-custom:hover {
-    background-color: #371603;
-    border-color: #638030;
-    color: white;
-}
-
-.badge-custom-green {
-    background-color: #759438 !important; 
-    color: #fff;
-}
-</style>
-
-
 
 
 {{-- BARIS 1: CARD PENDAPATAN, CARD PRODUK TERJUAL, & TOMBOL TRANSAKSI BARU --}}
 <div class="row mb-4 align-items-center">
-    <div class="col-lg-4 col-md-6">
-        <div class="card shadow-sm border-0 h-100 border-start border-primary border-5">
+    <div class="card-dash col-lg-4 col-md-6">
+        <div class="today-rev card shadow-sm border-0 h-100 border-start border-5">
             <div class="card-body">
                 <div class="row align-items-center">
                     <div class="col-auto">
-                        <i class="fas fa-sack-dollar fa-2x text-primary"></i>
+                        <i class="fas fa-sack-dollar fa-2x"></i>
                     </div>
                     <div class="col">
-                        <div class="text-xs text-uppercase mb-1 fw-bold" style="color: #1A0701;">
+                        <div class="today-list">
                             Today's Revenue
                         </div>
-                        <div class="h5 mb-0 font-weight-bold text-gray-800">
+                        <div class="today-data">
                             Rp {{ number_format($pendapatanHariIni ?? 0, 0, ',', '.') }}
                         </div>
                     </div>
@@ -51,19 +28,19 @@
         </div>
     </div>
     
-    {{-- TAMBAHAN: CARD TOTAL PRODUK TERJUAL HARI INI --}}
-    <div class="col-lg-4 col-md-6">
-        <div class="card shadow-sm border-0 h-100 border-start border-success border-5">
+    {{-- CARD TOTAL PRODUK TERJUAL HARI INI --}}
+    <div class="card-dash col-lg-4 col-md-6">
+        <div class="today-sold card shadow-sm border-0 h-100 border-start border-5">
             <div class="card-body">
                 <div class="row align-items-center">
                     <div class="col-auto">
-                        <i class="fas fa-box-open fa-2x text-success"></i>
+                        <i class="fas fa-box-open fa-2x"></i>
                     </div>
                     <div class="col">
-                        <div class="text-xs text-uppercase mb-1 fw-bold" style="color: #1A0701;">
+                        <div class="today-list">
                             Total Products Sold Today
                         </div>
-                        <div class="h5 mb-0 font-weight-bold text-gray-800">
+                        <div class="today-data">
                             {{ number_format($totalProdukTerjualHariIni ?? 0, 0, ',', '.') }} pcs
                         </div>
                     </div>
@@ -88,11 +65,10 @@
     <div class="col-lg-8 mb-4">
         <div class="card shadow-sm border-0 h-100">
             <div class="card-header py-3 bg-white border-bottom">
-                <h5 class="m-0 font-weight-bold text-dark" style="font-weight: 600">
+                <h5 class="m-0 font-weight-bold text-dark" style="font-weight: 500">
                     Sales Revenue Chart for the Last 7 Days
                 </h5>
             </div>
-            {{-- Hapus padding default card-body untuk Chart agar full --}}
             <div class="card-body p-2"> 
                 <div style="position: relative; height: 350px; width: 100%;">
                     <canvas id="penjualanChart"></canvas>
@@ -105,7 +81,7 @@
     <div class="col-lg-4 mb-4">
         <div class="card shadow-sm border-0 h-100">
             <div class="card-header py-3 bg-white border-bottom">
-                <h5 class="m-0 font-weight-bold text-dark" style="font-weight: 600;">
+                <h5 class="m-0 font-weight-bold text-dark" style="font-weight: 500;">
                     Top 3 Best-Selling Products Today
                 </h5>
             </div>
@@ -120,8 +96,8 @@
                                     Revenue : Rp {{ number_format($item->total_omzet, 0, ',', '.') }}
                                 </small>
                             </div>
-                            <span class="badge badge-custom-green py-2 px-3">
-                                {{ $item->total_quantity }} unit
+                            <span class="top-pcs">
+                                {{ $item->total_quantity }} pcs
                             </span>
                         </li>
                     @empty
@@ -165,15 +141,15 @@
                                     {{-- Menggunakan relasi Eloquent 'supplier' --}}
                                     <td>{{ $produk->supplier->supplier_name ?? 'Supplier Tidak Ditemukan' }}</td>
                                     <td>
-                                        <a href="{{ route('products.edit', $produk->id) }}" class="btn btn-sm " style="background-color: #759438; color: white">
+                                        <a href="{{ route('products.edit', $produk->id) }}" class="btn-purchase btn btn-sm " style="background-color: #A69DEE; font-weight:500">
                                             Puchase
                                         </a>
                                     </td>
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="5" class="text-center text-success">
-                                        Semua produk memiliki stok yang cukup.
+                                    <td colspan="5" class="text-center">
+                                        All products have sufficient stock.
                                     </td>
                                 </tr>
                             @endforelse
@@ -202,13 +178,13 @@
             datasets: [{
                 label: 'Omzet Penjualan (Rp)',
                 data: dataPenjualan,
-                backgroundColor: 'rgba(54, 162, 235, 0.3)',
-                borderColor: 'rgba(54, 162, 235, 1)',
-                borderWidth: 2,
+                backgroundColor: 'rgba(220, 237, 99, 0.3)',
+                borderColor: 'rgba(0, 0, 0, 1)',
+                borderWidth: 2.5,
                 tension: 0.4,
                 fill: true,
                 pointRadius: 4,
-                pointBackgroundColor: 'rgba(54,162,235,1)'
+                pointBackgroundColor: 'rgba(166,157,238,2)'
             }]
         },
         options: {
@@ -231,7 +207,6 @@
             scales: {
                 y: {
                     beginAtZero: true,
-                    // Kita bisa hapus title di sini agar tidak memakan ruang
                     title: { display: false }, 
                     ticks: {
                         callback: function(value) {
@@ -242,7 +217,6 @@
                     }
                 },
                 x: {
-                    // Kita bisa hapus title di sini agar tidak memakan ruang
                     title: { display: false } 
                 }
             },

@@ -1,49 +1,72 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Transaction Detail</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-</head>
-<body style="background: lightgray">
-    <div class="container mt-5">
-        <div class="card">
-            <div class="card-header">
-                <h3>Transaction Detail #{{ $transaction->id }}</h3>
-            </div>
-            <div class="card-body">
-                <p><strong>Cashier:</strong> {{ $transaction->cashier_name }}</p>
-                <p><strong>Customer Email:</strong> {{ $transaction->customer_email ?? '-' }}</p>
-                
-                {{-- UBAH BARIS DI BAWAH INI --}}
-                <p><strong>Date:</strong> {{ $transaction->created_at->format('d F Y - H:i:s') }}</p>
-                {{-- BATAS PERUBAHAN --}}
+@extends('layouts.app')
 
-                <hr>
+@section('content')
+
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <div class="form-card">
+                @php
+                    $invoiceId = 'INV-' . strtoupper($transaction->cashier_name) . '-' . $transaction->id;
+                @endphp
+
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h3>Transaction Detail</h3>
+                     <a href="{{ route('transactions.index') }}" class="btn btn-cancel">
+                        <i class="fa-solid fa-arrow-left me-2"></i>Back to List
+                    </a>
+                </div>
+                
+                <h4 class="text-muted mb-4">{{ $invoiceId }}</h4>
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Cashier Name</label>
+                        <p class="fs-5"><strong>{{ $transaction->cashier_name }}</strong></p>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Customer Email</label>
+                        <p class="fs-5"><strong>{{ $transaction->customer_email ?? '-' }}</strong></p>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Transaction Time</label>
+                        <p class="fs-5"><strong>{{ $transaction->created_at->format('d F Y - H:i:s') }}</strong></p>
+                    </div>
+                </div>
+
+                <hr class="my-4">
                 <h5>Items Purchased</h5>
-                <table class="table table-bordered">
-                    <thead><tr><th>Product</th><th>Quantity</th><th>Unit Price</th><th>Subtotal</th></tr></thead>
+
+                <table class="table table-borderless mt-3">
+                    <thead style="background-color: #f8f9fa;">
+                        <tr>
+                            <th class="py-3">Product</th>
+                            <th class="py-3 text-center">Quantity</th>
+                            <th class="py-3 text-end">Unit Price</th>
+                            <th class="py-3 text-end">Subtotal</th>
+                        </tr>
+                    </thead>
                     <tbody>
-                        @php $total = 0; @endphp
                         @foreach($transaction->details as $detail)
-                            @php
-                                $subtotal = $detail->product->price * $detail->quantity;
-                                $total += $subtotal;
-                            @endphp
                             <tr>
                                 <td>{{ $detail->product->title }}</td>
-                                <td>{{ $detail->quantity }}</td>
-                                <td>Rp {{ number_format($detail->product->price) }}</td>
-                                <td>Rp {{ number_format($subtotal) }}</td>
+                                <td class="text-center">{{ $detail->quantity }}</td>
+                                <td class="text-end">Rp {{ number_format($detail->price, 0, ',', '.') }}</td>
+                                <td class="text-end"><strong>Rp {{ number_format($detail->subtotal, 0, ',', '.') }}</strong></td>
                             </tr>
                         @endforeach
                     </tbody>
-                    <tfoot><tr><th colspan="3" class="text-end">Total:</th><th>Rp {{ number_format($total) }}</th></tr></tfoot>
+                    <tfoot>
+                        <tr style="background-color: #f8f9fa;">
+                            <td colspan="3" class="text-end py-3">
+                                <h5 class="mb-0">Grand Total:</h5>
+                            </td>
+                            <td class="text-end py-3">
+                                <h5 class="mb-0"><strong>Rp {{ number_format($transaction->grand_total, 0, ',', '.') }}</strong></h5>
+                            </td>
+                        </tr>
+                    </tfoot>
                 </table>
-                <a href="{{ route('transactions.index') }}" class="btn btn-secondary">Back</a>
             </div>
         </div>
     </div>
-</body>
-</html>
+@endsection

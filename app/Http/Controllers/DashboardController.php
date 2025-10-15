@@ -61,7 +61,7 @@ class DashboardController extends Controller
 
         return view('dashboard.index', compact(
             'pendapatanHariIni',
-            'totalProdukTerjualHariIni', // Variabel baru ditambahkan di sini
+            'totalProdukTerjualHariIni',
             'tanggal7Hari',
             'penjualan7Hari',
             'produkTertinggi',

@@ -3,28 +3,18 @@
 @section('title', 'Category Management')
 
 @section('content')
-{{-- Tambahkan isi asli kamu di bawah ini, tanpa ubah desain --}}
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-<link rel="stylesheet" href="{{ asset('css/transaction.css') }}">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-<div class="container mt-5">
     <div class="main-content-card">
-        <div class="top-header">
-            <h3>Category Management</h3>
-            <div class="search-bar-new">
-                <i class="fa-solid fa-search"></i>
-                <input type="text" id="searchInput" name="search" placeholder="Search categories..." class="form-control" value="{{ request('search') }}">
-                <span class="clear-search-btn" id="clearSearchBtn" style="{{ request('search') ? 'display:block;' : 'display:none;' }}">&times;</span>
-            </div>
-        </div>
-
-        {{-- Tombol Add --}}
         <div class="table-controls">
             <a href="{{ route('category_products.create') }}" class="btn add-btn">
                 <i class="fa-solid fa-plus"></i>
                 Add New Category
             </a>
+            <div class="search-bar-new">
+                <i class="fa-solid fa-search"></i>
+                <input type="text" id="searchInput" name="search" placeholder="Search categories..." class="form-control" value="{{ request('search') }}">
+                <span class="clear-search-btn" id="clearSearchBtn" style="{{ request('search') ? 'display:block;' : 'display:none;' }}">&times;</span>
+            </div>
         </div>
 
         <div class="table-responsive">
@@ -71,79 +61,77 @@
             </table>
         </div>
 
-        {{-- Pagination --}}
         <div class="d-flex justify-content-center mt-4">
-            {{ $category_products->links() }}
+            {{ $category_products->appends(request()->query())->links() }}
         </div>
     </div>
-</div>
+
+@endsection
 
 @push('scripts')
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
-<script>
-    // SweetAlert untuk pesan sukses
-    @if(session('success'))
-        Swal.fire({
-            icon: 'success',
-            title: 'SUCCESS',
-            text: '{{ session('success') }}',
-            showConfirmButton: false,
-            timer: 2000
-        });
-    @endif
-
-    // SweetAlert untuk konfirmasi hapus
-    const deleteButtons = document.querySelectorAll('.btn-delete');
-    deleteButtons.forEach(button => {
-        button.addEventListener('click', function (e) {
-            e.preventDefault();
-            const dataName = this.getAttribute('data-name');
-            const form = this.closest('form');
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        // SweetAlert untuk pesan sukses
+        @if(session('success'))
             Swal.fire({
-                title: `Delete category "${dataName}"?`,
-                text: "You won't be able to revert this!",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#d33',
-                cancelButtonColor: '#3085d6',
-                confirmButtonText: 'Yes, delete it!',
-                cancelButtonText: 'Cancel'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    form.submit();
-                }
+                icon: 'success',
+                title: 'SUCCESS',
+                text: '{{ session('success') }}',
+                showConfirmButton: false,
+                timer: 2000
+            });
+        @endif
+
+        // SweetAlert untuk konfirmasi hapus
+        const deleteButtons = document.querySelectorAll('.btn-delete');
+        deleteButtons.forEach(button => {
+            button.addEventListener('click', function (e) {
+                e.preventDefault();
+                const dataName = this.getAttribute('data-name');
+                const form = this.closest('form');
+
+                Swal.fire({
+                    title: `Delete category "${dataName}"?`,
+                    text: "You won't be able to revert this!",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#d33',
+                    cancelButtonColor: '#3085d6',
+                    confirmButtonText: 'Yes, delete it!',
+                    cancelButtonText: 'Cancel'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        form.submit();
+                    }
+                });
             });
         });
-    });
 
-    // Search Bar
-    const searchInput = document.getElementById('searchInput');
-    const clearSearchBtn = document.getElementById('clearSearchBtn');
+        // Script untuk Search Bar
+        const searchInput = document.getElementById('searchInput');
+        const clearSearchBtn = document.getElementById('clearSearchBtn');
 
-    searchInput.addEventListener('keyup', function(event) {
-        clearSearchBtn.style.display = this.value.length > 0 ? 'block' : 'none';
-        if (event.key === 'Enter') {
+        searchInput.addEventListener('keyup', function(event) {
+            clearSearchBtn.style.display = this.value.length > 0 ? 'block' : 'none';
+            if (event.key === 'Enter') {
+                const currentUrl = new URL(window.location.href);
+                currentUrl.searchParams.set('search', this.value);
+                currentUrl.searchParams.delete('page');
+                window.location.href = currentUrl.toString();
+            }
+        });
+        
+        clearSearchBtn.addEventListener('click', function() {
             const currentUrl = new URL(window.location.href);
-            currentUrl.searchParams.set('search', this.value);
+            currentUrl.searchParams.delete('search');
             currentUrl.searchParams.delete('page');
             window.location.href = currentUrl.toString();
-        }
-    });
+        });
 
-    clearSearchBtn.addEventListener('click', function() {
-        const currentUrl = new URL(window.location.href);
-        currentUrl.searchParams.delete('search');
-        currentUrl.searchParams.delete('page');
-        window.location.href = currentUrl.toString();
-    });
-
-    document.addEventListener('DOMContentLoaded', function() {
-        if (searchInput.value.length > 0) {
-            clearSearchBtn.style.display = 'block';
-        }
-    });
-</script>
+        document.addEventListener('DOMContentLoaded', function() {
+            if (searchInput.value && searchInput.value.length > 0) {
+                clearSearchBtn.style.display = 'block';
+            }
+        });
+    </script>
 @endpush
-@endsection

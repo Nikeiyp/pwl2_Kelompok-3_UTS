@@ -1,11 +1,134 @@
-/* public/css/style.css */
+/* public/css/transaction.css */
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
 
 body {
     font-family: 'Poppins', sans-serif;
-    background-color: #f4f7f6;
+    background-color: #ebebeb;
     margin: 0;
     padding: 0;
+}
+
+
+.sidebar {
+    
+    width: 350px;
+    height: 100vh;
+    position: fixed;
+    top: 0;
+    left: 0;
+    background-color: black;
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    padding-top: 1rem;
+    border-radius: 0 40px 40px 0;
+}
+
+.sidebar .brand {
+    font-size: 1.5rem;
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 1.5rem;
+    border-bottom: 1px solid rgba(255,255,255,0.2);
+    padding-bottom: 1rem;
+}
+
+.sidebar .nav-link {
+    display: block;
+    margin: 10px; 
+    padding: 10px 20px;  
+    color: #fff;
+    text-decoration: none;
+    transition: background 0.3s;
+}
+
+.sidebar .nav-link:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.sidebar .nav-link.active {
+    background-color: #DCED63;
+    color: black;
+    border-radius: 10px;
+    margin: 30px;
+    padding: 20px;
+    display: flex;
+    
+    align-items: center;
+
+}
+
+.card-dash {
+    height: 150px;
+}
+
+.today-rev{
+    background-color: #A69DEE;
+    border-radius: 40px;
+   
+}
+
+.today-list {
+    color: black;
+    font-size: 14pt;
+    font-weight: normal;
+    font-family: sans-serif;
+    padding-top: 10px;
+}
+
+.today-data {
+    font-size: 25pt;
+    font-weight: 500;
+    padding-top: 2px;
+}
+
+.today-sold {
+    background-color: #DCED63;
+    border-radius: 40px;
+}
+
+
+.col-auto {
+    margin-right: 10px;
+}
+
+
+.btn-custom {
+    height: 80px;
+    background-color: #000000;
+    color: white;
+    display: flex;              
+    justify-content: center;    
+    align-items: center;        
+    border: none;
+    border-radius: 50px;   
+    margin-left: 60px;  
+    height: 80px;
+}
+
+
+.btn-custom:hover {
+    background-color: #d1d1d0;
+
+}
+
+.top-pcs {
+    background-color: #DCED63;
+    padding: 15px;
+    border-radius: 10px;
+}
+
+
+.btn-purchase {
+    padding: 10px;
+    background-color: #A69DEE; 
+    font-weight:500;
+}
+
+.btn-purchase:hover {
+    
+    background-color: black; 
+    font-weight:500;
 }
 
 .container-fluid {
@@ -13,11 +136,13 @@ body {
     padding-right: 1.5rem;
 }
 
+
+
 /* Card utama yang membungkus semuanya */
 .main-content-card {
     background-color: #fff;
     padding: 1.5rem;
-    border-radius: 16px; /* Lebih rounded */
+    border-radius: 16px; 
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.07);
     border: none;
 }
@@ -43,7 +168,7 @@ body {
     border: 1px solid #e0e0e0;
     border-radius: 8px;
     padding: 0.5rem 1rem;
-    background-color: #f8f9fa; /* Warna background sedikit abu-abu */
+    background-color: #f8f9fa; 
     width: 300px;
     position: relative;
 }
@@ -83,29 +208,31 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 2rem; /* Jarak lebih besar ke tabel */
+    margin-bottom: 2rem; 
     gap: 1rem;
     flex-wrap: wrap;
 }
 
 .add-btn {
+    font-size: 13pt;
     display: inline-flex;
     align-items: center;
     gap: 0.5rem;
-    background-color: #759438;
+    height: 70px;
+    background-color: black;
     color: white;
     padding: 0.6rem 1.2rem;
-    border-radius: 8px;
+    border-radius: 50px;
     font-weight: 500;
     text-decoration: none;
     border: none;
     cursor: pointer;
-    transition: background-color 0.2s ease-in-out;
+    transition: background-color 0.2s ease-in-out; 
 }
 
 .add-btn:hover {
-    background-color: #60792d;
-    color: white;
+    background-color: #A69DEE; 
+    
 }
 
 .filter-dropdowns .dropdown-toggle {
@@ -121,22 +248,23 @@ body {
     overflow-x: auto;
 }
 
-/* Styling Tabel Baru */
+
 .table {
     vertical-align: middle;
-    border-collapse: separate; /* Penting untuk border-radius pada baris */
-    border-spacing: 0 0.75rem; /* Jarak vertikal antar baris */
+    border-collapse: separate; 
+    border-spacing: 0 0.75rem;
     min-width: 900px;
 }
 
 .table thead th {
-    background-color: transparent; /* Hilangkan background header */
+    
+    background-color: transparent; 
     font-weight: 600;
     border-bottom: 1px solid #e9ecef;
     padding: 1rem;
-    color: #888; /* Warna teks header lebih terang */
-    font-size: 0.9rem;
-    text-transform: uppercase;
+    color: #000000; 
+    font-size: 1rem;
+    text-transform: capitalize;
 }
 
 /* Hapus border atas-bawah default */
@@ -145,8 +273,8 @@ body {
 }
 
 .table tbody tr {
-    background-color: #f8f9fa; /* Warna background untuk setiap baris */
-    border-radius: 8px; /* Sudut rounded untuk setiap baris */
+    background-color: #f8f9fa; 
+    border-radius: 8px; 
     box-shadow: 0 2px 5px rgba(0,0,0,0.03);
 }
 
@@ -162,14 +290,14 @@ body {
 }
 
 .table tbody tr:hover {
-    background-color: #f1f3f5; /* Warna hover yang lebih subtle */
+    background-color: #f1f3f5; 
     transform: translateY(-2px);
     transition: transform 0.2s ease;
     box-shadow: 0 4px 10px rgba(0,0,0,0.05);
 }
 
 .table td, .table th {
-    padding: 1.2rem 1rem; /* Padding lebih besar */
+    padding: 1.2rem 1rem; 
 }
 
 .action-icons {
@@ -186,7 +314,7 @@ body {
     border-radius: 50%;
     color: #6c757d;
     cursor: pointer;
-    transition: background-color 0.2s, color 0.2s;
+    transition: background-color 0.2s, color 0.2s; 
     display: flex;
     justify-content: center;
     align-items: center;
@@ -196,16 +324,15 @@ body {
 }
 
 .action-icons a:hover {
-    background-color: #A44C1A; /* Warna hover bisa disesuaikan */
+    background-color: #A69DEE; 
     color: white;
 }
 
 .action-icons button:hover {
-    background-color: #B80000; /* Warna hover untuk hapus */
+    background-color: #B80000; 
     color: white;
 }
 
-/* Status badge (jika masih digunakan) */
 .status-badge {
     padding: 0.35rem 0.75rem;
     border-radius: 16px;
@@ -224,4 +351,19 @@ body {
 .status-pending {
     background-color: #ffedd5;
     color: #9a3412;
+}
+
+.main-content {
+    margin-left: 350px;
+    padding: 2rem;
+}
+
+.page-title {
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+}
+
+.card { /* Ini jika ada card lain di luar main-content-card */
+    border: none;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.1);
 }

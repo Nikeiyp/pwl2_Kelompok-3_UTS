@@ -1,120 +1,148 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Data Supplier</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-</head>
-<body style="background: lightgray">
+@extends('layouts.app')
 
-<div class="container mt-5">
-    <div class="row">
-        <div class="col-md-12">
-            <div>
-                <h3 class="text-center my-4">DATA SUPPLIER - TOKO JUALAN HP SECOND</h3>
-                <hr>
+@section('title', 'Supplier Management')
+
+@section('content')
+        <div class="main-content-card">
+            <div class="table-controls">
+
+                <a href="{{ route('suppliers.create') }}" class="btn add-btn">
+                    <i class="fa-solid fa-plus"></i>
+                    Add New Supplier
+                </a>
+
+                 <div class="search-bar-new">
+                    <i class="fa-solid fa-search"></i>
+                    <input type="text" id="searchInput" name="search" placeholder="Search suppliers..." class="form-control" value="{{ request('search') }}">
+                    <span class="clear-search-btn" id="clearSearchBtn" style="{{ request('search') ? 'display:block;' : 'display:none;' }}">&times;</span>
+                </div>
+
             </div>
-
-            <div class="card border-0 shadow-sm rounded">
-                <div class="card-body">
-                    <a href="{{ route('suppliers.create') }}" class="btn btn-md btn-success mb-3">TAMBAH SUPPLIER</a>
-                    <table class="table table-bordered">
-                        <thead class="table-dark text-center">
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Supplier Name</th>
+                            <th>PIC</th>
+                            <th>Email</th>
+                            <th>Phone</th>
+                            <th>Address</th>
+                            <th class="text-center">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @forelse ($suppliers as $supplier)
                             <tr>
-                                <th scope="col" style="width:5%">NO</th>
-                                <th scope="col">Supplier Name</th>
-                                <th scope="col">Person In Charge</th>
-                                <th scope="col">Email</th>
-                                <th scope="col">Telephone No.</th>
-                                <th scope="col">Address</th>
-                                <th scope="col" style="width:20%">AKSI</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @forelse ($suppliers as $supplier)
-                            <tr>
-                                <td class="text-center">{{ $loop->iteration }}</td>
-                                <td>{{ $supplier->supplier_name }}</td>
+                                <td><strong>{{ $supplier->supplier_name }}</strong></td>
                                 <td>{{ $supplier->pic_supplier ?? '-' }}</td>
                                 <td>{{ $supplier->supplier_email ?? '-' }}</td>
                                 <td>{{ $supplier->supplier_phone ?? '-' }}</td>
-                                <td>{{ $supplier->supplier_address ?? '-' }}</td>
+                                <td>{{ Str::limit($supplier->supplier_address, 30, '...') }}</td>
                                 <td class="text-center">
-                                    <a href="{{ route('suppliers.show', $supplier->id) }}" 
-                                       class="btn btn-sm btn-dark">SHOW</a>
-                                    <a href="{{ route('suppliers.edit', $supplier->id) }}" 
-                                       class="btn btn-sm btn-primary">EDIT</a>
-
-                                    <form id="hapus-form-{{ $supplier->id }}" 
-                                          action="{{ route('suppliers.destroy', $supplier->id) }}" 
-                                          method="POST" style="display:inline;">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="button" class="btn btn-sm btn-danger"
-                                                onclick="confirmDelete({{ $supplier->id }}, '{{ $supplier->supplier_name }}')">
-                                            HAPUS
-                                        </button>
-                                    </form>
+                                    <div class="action-icons">
+                                        <a href="{{ route('suppliers.show', $supplier->id) }}" title="Show Details">
+                                            <i class="fa-solid fa-eye"></i>
+                                        </a>
+                                        <a href="{{ route('suppliers.edit', $supplier->id) }}" title="Edit Supplier">
+                                            <i class="fa-solid fa-pencil"></i>
+                                        </a>
+                                        <form class="d-inline" action="{{ route('suppliers.destroy', $supplier->id) }}" method="POST">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="btn-delete" title="Delete Supplier" data-name="{{ $supplier->supplier_name }}">
+                                                <i class="fa-solid fa-trash-can"></i>
+                                            </button>
+                                        </form>
+                                    </div>
                                 </td>
                             </tr>
-                            @empty
+                        @empty
                             <tr>
-                                <td colspan="7" class="text-center">Data Supplier Belum Ada</td>
+                                <td colspan="6" class="text-center">
+                                    <div class="alert alert-secondary mt-3">
+                                        No Supplier Data Available.
+                                    </div>
+                                </td>
                             </tr>
-                            @endforelse
-                        </tbody>
-                    </table>
-                </div>
+                        @endforelse
+                    </tbody>
+                </table>
             </div>
 
+            <div class="d-flex justify-content-center mt-4">
+                {{-- Menambahkan appends agar parameter search tidak hilang saat paginasi --}}
+                {{ $suppliers->appends(request()->query())->links() }}
+            </div>
         </div>
-    </div>
-</div>
 
-{{-- Bootstrap & SweetAlert2 --}}
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+@endsection
 
-<script>
-    // Notifikasi sukses/gagal
-    @if(session('success'))
-        Swal.fire({
-            icon: "success",
-            title: "BERHASIL",
-            text: "{{ session('success') }}",
-            showConfirmButton: false,
-            timer: 2000
+@push('scripts')
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        // SweetAlert for success messages
+        @if(session('success'))
+            Swal.fire({
+                icon: 'success',
+                title: 'SUCCESS',
+                text: '{{ session('success') }}',
+                showConfirmButton: false,
+                timer: 2000
+            });
+        @endif
+
+        // SweetAlert for delete confirmation
+        const deleteButtons = document.querySelectorAll('.btn-delete');
+        deleteButtons.forEach(button => {
+            button.addEventListener('click', function (e) {
+                e.preventDefault();
+                
+                const dataName = this.getAttribute('data-name');
+                const form = this.closest('form');
+
+                Swal.fire({
+                    title: `Are you sure you want to delete ${dataName}?`,
+                    text: "You won't be able to revert this!",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#B80000',
+                    cancelButtonColor: '#a4a4a4ff',
+                    confirmButtonText: 'Yes, delete it!',
+                    cancelButtonText: 'Cancel'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        form.submit();
+                    }
+                });
+            });
         });
-    @elseif(session('error'))
-        Swal.fire({
-            icon: "error",
-            title: "GAGAL",
-            text: "{{ session('error') }}",
-            showConfirmButton: false,
-            timer: 2000
-        });
-    @endif
+        
+        const searchInput = document.getElementById('searchInput');
+        const clearSearchBtn = document.getElementById('clearSearchBtn');
 
-    // Konfirmasi hapus pakai SweetAlert
-    function confirmDelete(id, name) {
-        Swal.fire({
-            title: "Yakin hapus supplier " + name + " ?",
-            text: "Data yang dihapus tidak bisa dikembalikan!",
-            icon: "warning",
-            showCancelButton: true,
-            confirmButtonColor: "#d33",
-            cancelButtonColor: "#3085d6",
-            confirmButtonText: "Ya, hapus!",
-            cancelButtonText: "Batal"
-        }).then((result) => {
-            if (result.isConfirmed) {
-                document.getElementById('hapus-form-' + id).submit();
+        searchInput.addEventListener('keyup', function(event) {
+            clearSearchBtn.style.display = this.value.length > 0 ? 'block' : 'none';
+
+            if (event.key === 'Enter') { 
+                const currentUrl = new URL(window.location.href);
+                currentUrl.searchParams.set('search', this.value);
+                // Hapus baris yang error terkait dateFilter
+                currentUrl.searchParams.delete('page');
+                window.location.href = currentUrl.toString();
             }
         });
-    }
-</script>
+        
+        clearSearchBtn.addEventListener('click', function() {
+            const currentUrl = new URL(window.location.href);
+            currentUrl.searchParams.delete('search');
+            currentUrl.searchParams.delete('page');
+            window.location.href = currentUrl.toString();
+        });
 
-</body>
-</html>
+        document.addEventListener('DOMContentLoaded', function() {
+            if (searchInput.value && searchInput.value.length > 0) {
+                clearSearchBtn.style.display = 'block';
+            }
+        });
+    </script>
+@endpush

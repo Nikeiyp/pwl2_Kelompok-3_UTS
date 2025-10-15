@@ -1,123 +1,130 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Transaction Data</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-</head>
-<body style="background: lightgray">
+@extends('layouts.app')
 
-    {{-- <nav class="navbar navbar-expand-lg navbar-light bg-light mb-4">
-        <div class="container-fluid">
-            <a class="navbar-brand" href="#">UTS Project</a>
-            <div class="collapse navbar-collapse">
-                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ route('products.index') }}">Products</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">Supplier</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="">Category Products</a>
-                        
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ route('transactions.index') }}">Transactions</a>
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </nav> --}}
+@section('title', 'Transaction Management')
 
-    <div class="container mt-5">
-        <div class="row">
-            <div class="col-md-12">
-                <div>
-                    <h3 class="text-center my-4">Transaction Management</h3>
-                    <hr>
+@section('content')
+
+    <div class="main-content-card">
+        <div class="table-controls">
+            <a href="{{ route('transactions.create') }}" class="btn add-btn">
+                <i class="fa-solid fa-plus"></i>
+                Add New Transaction
+            </a>
+            <div class="header-actions">
+                <div class="search-bar-new">
+                    <i class="fa-solid fa-search"></i>
+                    <input type="text" id="searchInput" name="search" placeholder="Search transactions..." class="form-control" value="{{ request('search') }}">
+                    <span class="clear-search-btn" id="clearSearchBtn" style="{{ request('search') ? 'display:block;' : 'display:none;' }}">&times;</span>
                 </div>
-                <div class="card border-0 shadow-sm rounded">
-                    <div class="card-body">
-                        <a href="{{ route('transactions.create') }}" class="btn btn-md btn-success mb-3">ADD TRANSACTION</a>
-                        <table class="table table-bordered">
-                            <thead>
-                                <tr>
-                                    <th>ID</th>
-                                    <th>CASHIER NAME</th>
-                                    <th>DATE</th>
-                                    <th style="width: 25%">ACTIONS</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @forelse ($transactions as $transaction)
-                                    <tr>
-                                        <td>{{ $transaction->id }}</td>
-                                        <td>{{ $transaction->cashier_name }}</td>
-                                        <td>{{ $transaction->created_at->format('d-m-Y') }}</td>
-                                        <td class="text-center">
-                                            <form onsubmit="return confirm('Are you sure?');" action="{{ route('transactions.destroy', $transaction->id) }}" method="POST">
-                                                <a href="{{ route('transactions.show', $transaction->id) }}" class="btn btn-sm btn-dark">SHOW</a>
-                                                <a href="{{ route('transactions.edit', $transaction->id) }}" class="btn btn-sm btn-primary">EDIT</a>
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="submit" class="btn btn-sm btn-danger btn-delete">DELETE</button>
-                                            </form>
-                                        </td>
-                                    </tr>
-                                @empty
-                                    <div class="alert alert-danger">
-                                        No Transaction Data Available.
-                                    </div>
-                                @endforelse
-                            </tbody>
-                        </table>
-                        {{ $transactions->links() }}
+                <div class="filter-dropdowns">
+                    <div class="dropdown">
+                        <button class="btn dropdown-toggle" type="button" id="dateDropdownButton" data-bs-toggle="dropdown" aria-expanded="false">
+                            {{-- This logic correctly displays the active date filter --}}
+                            @php
+                                $dateFilter = request('date_filter');
+                                if ($dateFilter == 'today') echo 'Today';
+                                elseif ($dateFilter == 'last_7_days') echo 'Last 7 Days';
+                                elseif ($dateFilter == 'last_month') echo 'Last Month';
+                                elseif ($dateFilter == 'all_time') echo 'All Time';
+                                else echo 'This Month';
+                            @endphp
+                        </button>
+                        <ul class="dropdown-menu" aria-labelledby="dateDropdownButton">
+                            <li><a class="dropdown-item" href="{{ route('transactions.index', array_merge(request()->except('date_filter', 'page'), ['date_filter' => 'this_month'])) }}">This Month</a></li>
+                            <li><a class="dropdown-item" href="{{ route('transactions.index', array_merge(request()->except('date_filter', 'page'), ['date_filter' => 'today'])) }}">Today</a></li>
+                            <li><a class="dropdown-item" href="{{ route('transactions.index', array_merge(request()->except('date_filter', 'page'), ['date_filter' => 'last_7_days'])) }}">Last 7 Days</a></li>
+                            <li><a class="dropdown-item" href="{{ route('transactions.index', array_merge(request()->except('date_filter', 'page'), ['date_filter' => 'last_month'])) }}">Last Month</a></li>
+                            <li><a class="dropdown-item" href="{{ route('transactions.index', array_merge(request()->except('date_filter', 'page'), ['date_filter' => 'all_time'])) }}">All Time</a></li>
+                        </ul>
                     </div>
                 </div>
             </div>
         </div>
+
+        <div class="table-responsive">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Cashier Name</th>
+                        <th>Customer Email</th>
+                        <th>Date</th>
+                        <th>Grand Total</th>
+                        <th class="text-center">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @forelse ($transactions as $transaction)
+                        <tr>
+                            <td><strong>#{{ $transaction->id }}</strong></td>
+                            <td>{{ $transaction->cashier_name }}</td>
+                            <td>{{ $transaction->customer_email ?? '-' }}</td>
+                            <td>{{ \Carbon\Carbon::parse($transaction->created_at)->format('d F, Y') }}</td>
+                            <td><strong>Rp {{ number_format($transaction->grand_total, 0, ',', '.') }}</strong></td>
+                            <td class="text-center">
+                                <div class="action-icons">
+                                    <a href="{{ route('transactions.show', $transaction->id) }}" title="Show Details"><i class="fa-solid fa-eye"></i></a>
+                                    <a href="{{ route('transactions.edit', $transaction->id) }}" title="Edit Transaction"><i class="fa-solid fa-pencil"></i></a>
+                                    <form class="d-inline" action="{{ route('transactions.destroy', $transaction->id) }}" method="POST">
+                                        @csrf
+                                        @method('DELETE')
+                                        @php
+                                            $invoiceId = 'INV-' . strtoupper($transaction->cashier_name) . '-' . $transaction->id;
+                                        @endphp
+                                        <button type="submit" class="btn-delete" title="Delete Transaction" data-name="{{ $invoiceId }}">
+                                            <i class="fa-solid fa-trash-can"></i>
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="6" class="text-center">
+                                <div class="alert alert-secondary mt-3">No Transaction Data Available.</div>
+                            </td>
+                        </tr>
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
+
+        <div class="d-flex justify-content-center mt-4">
+            {{ $transactions->appends(request()->query())->links() }}
+        </div>
     </div>
+
+@endsection
+
+@push('scripts')
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    @if(session('success'))
-        <script>
-        //message with sweetalert
+    <script>
         @if(session('success'))
             Swal.fire({
-                icon: "success",
-                title: "BERHASIL",
-                text: "{{ session('success') }}",
-                showConfirmButton: false,
-                timer: 2000
-            });
-        @elseif(session('error'))
-            Swal.fire({
-                icon: "error",
-                title: "GAGAL!",
-                text: "{{ session('error') }}",
+                icon: 'success',
+                title: 'SUCCESS',
+                text: '{{ session('success') }}',
                 showConfirmButton: false,
                 timer: 2000
             });
         @endif
 
-        // SWAL FIRE
+        // SweetAlert for delete confirmation
         const deleteButtons = document.querySelectorAll('.btn-delete');
         deleteButtons.forEach(button => {
             button.addEventListener('click', function (e) {
                 e.preventDefault();
-
+                const dataName = this.getAttribute('data-name');
                 const form = this.closest('form');
-
                 Swal.fire({
-                    title: 'Yakin hapus data ini?',
-                    text: "Data yang dihapus tidak bisa dikembalikan!",
+                    title: `Are you sure you want to delete ${dataName}?`,
+                    text: "You won't be able to revert this!",
                     icon: 'warning',
                     showCancelButton: true,
-                    confirmButtonColor: '#d33',
-                    cancelButtonColor: '#3085d6',
-                    confirmButtonText: 'Ya, hapus!',
-                    cancelButtonText: 'Batal'
+                    confirmButtonColor: '#B80000',
+                    cancelButtonColor: '#a4a4a4ff',
+                    confirmButtonText: 'Yes, delete it!',
+                    cancelButtonText: 'Cancel'
                 }).then((result) => {
                     if (result.isConfirmed) {
                         form.submit();
@@ -126,7 +133,28 @@
             });
         });
 
+        // Search script
+        const searchInput = document.getElementById('searchInput');
+        const clearSearchBtn = document.getElementById('clearSearchBtn');
+        searchInput.addEventListener('keyup', function(event) {
+            clearSearchBtn.style.display = this.value.length > 0 ? 'block' : 'none';
+            if (event.key === 'Enter') {
+                const currentUrl = new URL(window.location.href);
+                currentUrl.searchParams.set('search', this.value);
+                currentUrl.searchParams.delete('page');
+                window.location.href = currentUrl.toString();
+            }
+        });
+        clearSearchBtn.addEventListener('click', function() {
+            const currentUrl = new URL(window.location.href);
+            currentUrl.searchParams.delete('search');
+            currentUrl.searchParams.delete('page');
+            window.location.href = currentUrl.toString();
+        });
+        document.addEventListener('DOMContentLoaded', function() {
+            if (searchInput.value && searchInput.value.length > 0) {
+                clearSearchBtn.style.display = 'block';
+            }
+        });
     </script>
-    @endif
-</body>
-</html>
+@endpush

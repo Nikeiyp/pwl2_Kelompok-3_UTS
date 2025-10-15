@@ -3,117 +3,76 @@
 namespace App\Http\Controllers;
 
 use App\Models\Supplier;
-use Illuminate\View\View;
 use Illuminate\Http\Request;
+use Illuminate\View\View;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Support\ViewErrorBag;
 
 class SupplierController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index(): View
+    public function index(Request $request): View
     {
-        //get all suppliers
-        $supplier = new Supplier;
-        $suppliers = $supplier->get_supplier()->latest()->paginate(10);
+        $suppliersQuery = Supplier::query();
 
-        $suppliers = Supplier::latest()->paginate(10);
-        return view('suppliers.index', compact('suppliers'));
+    if ($request->filled('search')) {
+        $searchTerm = $request->input('search');
+        $suppliersQuery->where('supplier_name', 'like', '%' . $searchTerm . '%')
+                       ->orWhere('pic_supplier', 'like', '%' . $searchTerm . '%')
+                       ->orWhere('supplier_email', 'like', '%' . $searchTerm . '%');
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
+    $suppliers = $suppliersQuery->latest()->paginate(10);
+
+    return view('suppliers.index', compact('suppliers'));
+    }
+
     public function create(): View
     {
         return view('suppliers.create');
     }
 
-     /**
-     * store
-     *
-     * @param  mixed $request
-     * @return RedirectResponse
-     */
-    public function store(Request $request) : RedirectResponse
-
+    public function store(Request $request): RedirectResponse
     {
-        $validated = $request->validate([
-        'supplier_name' => 'required|string|max:100',
-        'pic_supplier' => 'required|string|max:100',
-        'supplier_email' => 'required|email',
-        'supplier_phone' => 'required|string|max:20',
-        'supplier_address' => 'required|string'
-    ]);
 
-    Supplier::create($validated);
+         $request->validate([
+            'supplier_name'    => 'required|min:3',
+            'pic_supplier'     => 'nullable|string',
+            'supplier_email'   => 'nullable|email',
+            'supplier_phone'   => 'nullable|numeric',
+            'supplier_address' => 'nullable|string',
+        ]);
+        Supplier::create($request->all());
 
-    return redirect()->route('suppliers.index')->with('success', 'Supplier berhasil ditambahkan!');
+        return redirect()->route('suppliers.index')->with(['success' => 'Data Supplier Berhasil Disimpan!']);
     }
-    
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id): View
+    public function show(Supplier $supplier): View
     {
-         //get supplier by ID
-        $supplier_model = new Supplier;
-        $supplier = $supplier_model->get_supplier()->where("supplier.id", $id)->firstOrFail();
-
         return view('suppliers.show', compact('supplier'));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     * @param mixed $id
-     * @return View
-     */
-    public function edit(string $id): View
+    public function edit(Supplier $supplier): View
     {
-        $supplier_model = new Supplier;
-        $supplier = $supplier_model->get_supplier()->where("supplier.id", $id)->firstOrFail();
-
-        return view('suppliers.edit', compact('supplier')); 
+        return view('suppliers.edit', compact('supplier'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request, Supplier $supplier): RedirectResponse
     {
-        $validated = $request->validate([
-            'supplier_name'   => 'required|string|max:100',
-            'pic_supplier'    => 'required|string|max:100',
-            'supplier_email'  => 'required|email|max:100',
-            'supplier_phone'  => 'required|string|max:20',
-            'supplier_address'=> 'required|string|max:255'
+        // 1. Validasi semua input
+        $request->validate([
+            'supplier_name'    => 'required|min:3',
+            'pic_supplier'     => 'nullable|string',
+            'supplier_email'   => 'nullable|email',
+            'supplier_phone'   => 'nullable|numeric',
+            'supplier_address' => 'nullable|string',
         ]);
+        $supplier->update($request->all());
 
-        $supplier->update($validated);
-
-        return redirect()->route('suppliers.index')->with('success', 'Supplier berhasil diperbarui!');
+        return redirect()->route('suppliers.index')->with(['success' => 'Data Supplier Berhasil Diubah!']);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy($id): RedirectResponse
+    public function destroy(Supplier $supplier): RedirectResponse
     {
-        //get supplier by ID
-        $supplier_model = new Supplier;
-        $supplier = $supplier_model->get_supplier()->where("supplier.id", $id)->firstOrFail();
-
-        
-
-        //delete product
         $supplier->delete();
-
-        //redirect to index
-        return redirect()->route('suppliers.index')->with(['success' => 'Data Berhasil Dihapus!']);
+        return redirect()->route('suppliers.index')->with(['success' => 'Data Supplier Berhasil Dihapus!']);
     }
-
-
 }

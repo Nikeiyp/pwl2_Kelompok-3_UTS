@@ -92,15 +92,15 @@
 }
 
 .btn-save {
-    background-color: #759438;
-    color: white;
+    background-color: #DCED63;
+    color: black;
     font-weight: 500;
     padding: 0.75rem 1.5rem;
     border-radius: 8px;
 }
 .btn-save:hover {
-    background-color: #60792d;
-    color: white;
+    background-color: #bcc95a;
+    color: black;
 }
 
 .btn-cancel {

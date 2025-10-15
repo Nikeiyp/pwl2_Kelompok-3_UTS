@@ -1,103 +1,61 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Edit Supplier</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-</head>
-<body style="background: lightgray">
+@extends('layouts.app')
 
-<div class="container mt-5 mb-5">
-    <div class="row">
-        <div class="col-md-12">
-            <h3>Edit Supplier</h3>
-            <div class="card border-0 shadow-sm rounded">
-                <div class="card-body">
-                    <form id="supplierForm" action="{{ route('suppliers.update', $supplier->id) }}" method="POST">
-                        @csrf
-                        @method('PUT')
+@section('content')
 
-                        <div class="form-group mb-3">
-                            <label class="font-weight-bold">SUPPLIER NAME</label>
-                            <input type="text" 
-                                   class="form-control @error('supplier_name') is-invalid @enderror" 
-                                   name="supplier_name" 
-                                   value="{{ old('supplier_name', $supplier->supplier_name) }}" 
-                                   placeholder="Masukkan Nama Supplier" 
-                                   required>
-                            @error('supplier_name')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                        </div>
-
-                        <div class="form-group mb-3">
-                            <label class="font-weight-bold">PIC SUPPLIER</label>
-                            <input type="text" 
-                                   class="form-control @error('pic_supplier') is-invalid @enderror" 
-                                   name="pic_supplier" 
-                                   value="{{ old('pic_supplier', $supplier->pic_supplier) }}" 
-                                   placeholder="Masukkan Nama PIC Supplier" 
-                                   required>
-                            @error('pic_supplier')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                        </div>
-
-                        <div class="form-group mb-3">
-                            <label class="font-weight-bold">EMAIL</label>
-                            <input type="email" 
-                                   class="form-control @error('supplier_email') is-invalid @enderror" 
-                                   name="supplier_email" 
-                                   value="{{ old('supplier_email', $supplier->supplier_email) }}" 
-                                   placeholder="Masukkan Email Supplier" 
-                                   required>
-                            @error('supplier_email')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                        </div>
-
-                        <div class="form-group mb-3">
-                            <label class="font-weight-bold">PHONE</label>
-                            <input type="text" 
-                                   class="form-control @error('supplier_phone') is-invalid @enderror" 
-                                   name="supplier_phone" 
-                                   value="{{ old('supplier_phone', $supplier->supplier_phone) }}" 
-                                   placeholder="Masukkan Nomor Telepon Supplier" 
-                                   required>
-                            @error('supplier_phone')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                        </div>
-
-                        <div class="form-group mb-3">
-                            <label class="font-weight-bold">ADDRESS</label>
-                            <textarea class="form-control @error('supplier_address') is-invalid @enderror" 
-                                      name="supplier_address" 
-                                      rows="4" 
-                                      placeholder="Masukkan Alamat Supplier" 
-                                      required>{{ old('supplier_address', $supplier->supplier_address) }}</textarea>
-                            @error('supplier_address')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                        </div>
-
-                        <button type="submit" class="btn btn-md btn-primary me-3">UPDATE</button>
-                        <button type="button" onclick="resetForm()" class="btn btn-md btn-warning">RESET</button>
-                        <a href="{{ route('suppliers.index') }}" class="btn btn-md btn-secondary">BACK</a>
-                    </form>
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="form-card">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h3>Edit Supplier</h3>
+                    <a href="{{ route('suppliers.index') }}" class="btn btn-cancel ms-auto">
+                        <i class="fa-solid fa-arrow-left me-2"></i>Back to List
+                    </a>
                 </div>
+                
+                @if ($errors->any())
+                    <div class="alert alert-danger">
+                        <ul class="mb-0">
+                            @foreach ($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                @endif
+
+                <form action="{{ route('suppliers.update', $supplier->id) }}" method="POST">
+                    @csrf
+                    @method('PUT')
+                    <div class="row">
+                        <div class="col-md-6 mb-4">
+                            <label for="supplier_name" class="form-label">Supplier Name</label>
+                            <input type="text" id="supplier_name" class="form-control" name="supplier_name" value="{{ old('supplier_name', $supplier->supplier_name) }}" required>
+                        </div>
+                        <div class="col-md-6 mb-4">
+                            <label for="pic_supplier" class="form-label">Person In Charge (PIC)</label>
+                            <input type="text" id="pic_supplier" class="form-control" name="pic_supplier" value="{{ old('pic_supplier', $supplier->pic_supplier) }}">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-4">
+                            <label for="supplier_email" class="form-label">Email</label>
+                            <input type="email" id="supplier_email" class="form-control" name="supplier_email" value="{{ old('supplier_email', $supplier->supplier_email) }}">
+                        </div>
+                        <div class="col-md-6 mb-4">
+                            <label for="supplier_phone" class="form-label">Phone</label>
+                            <input type="text" id="supplier_phone" class="form-control" name="supplier_phone" value="{{ old('supplier_phone', $supplier->supplier_phone) }}">
+                        </div>
+                    </div>
+                    <div class="mb-4">
+                        <label for="supplier_address" class="form-label">Address</label>
+                        <textarea id="supplier_address" name="supplier_address" class="form-control" rows="3">{{ old('supplier_address', $supplier->supplier_address) }}</textarea>
+                    </div>
+                    
+                    <div class="form-actions">
+                        <a href="{{ route('suppliers.index') }}" class="btn btn-cancel">Cancel</a>
+                        <button type="submit" class="btn btn-save">Update Supplier</button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
-</div>
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-<script>
-    function resetForm() {
-        document.getElementById("supplierForm").reset();
-    }
-</script>
-</body>
-</html>
+@endsection

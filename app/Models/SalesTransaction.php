@@ -14,7 +14,7 @@ class SalesTransaction extends Model
     protected $fillable = [
         'cashier_name',
         'customer_email',
-        'grand_total', // Tambahkan ini
+        'grand_total',
     ];
 
     public function details()
