@@ -19,13 +19,25 @@ class ProductController extends Controller
      *
      * @return View
      */
-    public function index(): View
-    {
-        $product = new Product;
-        $products = $product->get_product()->latest()->paginate(10);
+    public function index(Request $request): View
+{
+   
+    $product_model = new Product;
+    $productsQuery = $product_model->get_product();
 
-        return view('products.index', compact('products'));
+    if ($request->filled('search')) {
+        $searchTerm = $request->input('search');
+        $productsQuery->where(function($query) use ($searchTerm) {
+            $query->where('products.title', 'like', '%' . $searchTerm . '%')
+                  ->orWhere('category_product.product_category_name', 'like', '%' . $searchTerm . '%') 
+                  ->orWhere('supplier.supplier_name', 'like', '%' . $searchTerm . '%');
+        });
     }
+
+    $products = $productsQuery->latest('products.created_at')->paginate(10);
+
+    return view('products.index', compact('products'));
+}
 
     /**
      * create
@@ -105,7 +117,7 @@ class ProductController extends Controller
         $category_product = new Category_product;
         $supplier = new Supplier;
         $data['categories'] = $category_product->get_category_product()->get();
-        $data['suppliers_'] = $supplier->get_supplier();
+        $data['suppliers'] = $supplier->get_supplier();
    
         return view('products.edit', compact('data'));
     }
@@ -147,7 +159,7 @@ class ProductController extends Controller
                 'title'                 => $request->title,
                 'product_category_id'   => $request->product_category_id,
                 'supplier_id'           => $request->supplier_id,
-                'description'           => $request->description,
+                'description'           => $request->deskripsi,
                 'price'                 => $request->price,
                 'stock'                 => $request->stock
             ];

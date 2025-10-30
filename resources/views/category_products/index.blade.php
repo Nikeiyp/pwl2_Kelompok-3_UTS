@@ -1,112 +1,104 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Data Kategori Produk</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-</head>
-<body style="background: lightgray">
-    
-    <nav class="navbar navbar-expand-lg navbar-light bg-light mb-4">
-        <div class="container-fluid">
-            <a class="navbar-brand" href="#">UTS Project</a>
-            <div class="collapse navbar-collapse">
-                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ route('products.index') }}">Products</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">Supplier</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ route('category_products.index') }}">Category Products</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ route('transactions.index') }}">Transactions</a>
-                    </li>
-                </ul>
+@extends('layouts.app')
+
+@section('title', 'Category Management')
+
+@section('content')
+
+    <div class="main-content-card">
+        <div class="table-controls">
+            <a href="{{ route('category_products.create') }}" class="btn add-btn">
+                <i class="fa-solid fa-plus"></i>
+                Add New Category
+            </a>
+            <div class="search-bar-new">
+                <i class="fa-solid fa-search"></i>
+                <input type="text" id="searchInput" name="search" placeholder="Search categories..." class="form-control" value="{{ request('search') }}">
+                <span class="clear-search-btn" id="clearSearchBtn" style="{{ request('search') ? 'display:block;' : 'display:none;' }}">&times;</span>
             </div>
         </div>
-    </nav>
 
-    <div class="container mt-5">
-        <div class="row">
-            <div class="col-md-12">
-                <div class="card border-0 shadow-sm rounded">
-                    <div class="card-body">
-                        <a href="{{ route('category_products.create') }}" class="btn btn-md btn-success mb-3">TAMBAH KATEGORI</a>
-                        <table class="table table-bordered">
-                            <thead>
-                                <tr>
-                                    <th scope="col">NAMA KATEGORI</th>
-                                    <th scope="col" style="width: 20%">AKSI</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @forelse ($categories as $category)
-                                    <tr>
-                                        <td>{{ $category->product_category_name }}</td>
-                                        <td class="text-center">
-                                            <form onsubmit="return confirm('Apakah Anda Yakin ?');" action="{{ route('category_products.destroy', $category->id) }}" method="POST">
-                                                <a href="{{ route('category_products.edit', $category->id) }}" class="btn btn-sm btn-primary">EDIT</a>
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="submit" class="btn btn-sm btn-danger btn-delete">HAPUS</button>
-                                            </form>
-                                        </td>
-                                    </tr>
-                                @empty
-                                    <div class="alert alert-danger">Data Kategori Produk belum Tersedia.</div>
-                                @endforelse
-                            </tbody>
-                        </table>
-                        {{ $categories->links() }}
-                    </div>
-                </div>
-            </div>
+        <div class="table-responsive">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Category Name</th>
+                        <th>Created At</th>
+                        <th class="text-center">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @forelse ($category_products as $category)
+                        <tr>
+                            <td><strong>#{{ $category->id }}</strong></td>
+                            <td>{{ $category->product_category_name }}</td>
+                            <td>{{ $category->created_at ? $category->created_at->format('d F Y') : '-' }}</td>
+                            <td class="text-center">
+                                <div class="action-icons">
+                                    <a href="{{ route('category_products.edit', $category->id) }}" title="Edit Category">
+                                        <i class="fa-solid fa-pencil"></i>
+                                    </a>
+                                    <form class="d-inline" action="{{ route('category_products.destroy', $category->id) }}" method="POST">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="btn-delete" title="Delete Category" data-name="{{ $category->product_category_name }}">
+                                            <i class="fa-solid fa-trash-can"></i>
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="4" class="text-center">
+                                <div class="alert alert-secondary mt-3">
+                                    No Category Data Available.
+                                </div>
+                            </td>
+                        </tr>
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
+
+        <div class="d-flex justify-content-center mt-4">
+            {{ $category_products->appends(request()->query())->links() }}
         </div>
     </div>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+@endsection
+
+@push('scripts')
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    @if(session('success'))
-        <script>
-        //message with sweetalert
+    <script>
+        // SweetAlert untuk pesan sukses
         @if(session('success'))
             Swal.fire({
-                icon: "success",
-                title: "BERHASIL",
-                text: "{{ session('success') }}",
-                showConfirmButton: false,
-                timer: 2000
-            });
-        @elseif(session('error'))
-            Swal.fire({
-                icon: "error",
-                title: "GAGAL!",
-                text: "{{ session('error') }}",
+                icon: 'success',
+                title: 'SUCCESS',
+                text: '{{ session('success') }}',
                 showConfirmButton: false,
                 timer: 2000
             });
         @endif
 
-        // SWAL FIRE
+        // SweetAlert untuk konfirmasi hapus
         const deleteButtons = document.querySelectorAll('.btn-delete');
         deleteButtons.forEach(button => {
             button.addEventListener('click', function (e) {
                 e.preventDefault();
-
+                const dataName = this.getAttribute('data-name');
                 const form = this.closest('form');
 
                 Swal.fire({
-                    title: 'Yakin hapus data ini?',
-                    text: "Data yang dihapus tidak bisa dikembalikan!",
+                    title: `Delete category "${dataName}"?`,
+                    text: "You won't be able to revert this!",
                     icon: 'warning',
                     showCancelButton: true,
                     confirmButtonColor: '#d33',
                     cancelButtonColor: '#3085d6',
-                    confirmButtonText: 'Ya, hapus!',
-                    cancelButtonText: 'Batal'
+                    confirmButtonText: 'Yes, delete it!',
+                    cancelButtonText: 'Cancel'
                 }).then((result) => {
                     if (result.isConfirmed) {
                         form.submit();
@@ -115,7 +107,31 @@
             });
         });
 
+        // Script untuk Search Bar
+        const searchInput = document.getElementById('searchInput');
+        const clearSearchBtn = document.getElementById('clearSearchBtn');
+
+        searchInput.addEventListener('keyup', function(event) {
+            clearSearchBtn.style.display = this.value.length > 0 ? 'block' : 'none';
+            if (event.key === 'Enter') {
+                const currentUrl = new URL(window.location.href);
+                currentUrl.searchParams.set('search', this.value);
+                currentUrl.searchParams.delete('page');
+                window.location.href = currentUrl.toString();
+            }
+        });
+        
+        clearSearchBtn.addEventListener('click', function() {
+            const currentUrl = new URL(window.location.href);
+            currentUrl.searchParams.delete('search');
+            currentUrl.searchParams.delete('page');
+            window.location.href = currentUrl.toString();
+        });
+
+        document.addEventListener('DOMContentLoaded', function() {
+            if (searchInput.value && searchInput.value.length > 0) {
+                clearSearchBtn.style.display = 'block';
+            }
+        });
     </script>
-    @endif
-</body>
-</html>
+@endpush

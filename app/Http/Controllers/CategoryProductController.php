@@ -9,10 +9,18 @@ use Illuminate\Http\RedirectResponse;
 
 class CategoryProductController extends Controller
 {
-    public function index(): View
+    public function index(Request $request): View
     {
-        $categories = Category_product::latest()->paginate(10);
-        return view('category_products.index', compact('categories'));
+        $category_products = Category_product::query();
+        
+        if ($request->filled('search')) {
+            $searchTerm = $request->input('search');
+            $category_products->where('product_category_name', 'like', '%' . $searchTerm . '%');
+        }
+
+        $category_products = $category_products->latest()->paginate(10);
+
+        return view('category_products.index', compact('category_products'));
     }
 
     public function create(): View

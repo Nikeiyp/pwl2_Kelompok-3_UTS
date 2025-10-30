@@ -1,33 +1,41 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tambah Kategori</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-</head>
-<body style="background: lightgray">
-    <div class="container mt-5">
-        <div class="row">
-            <div class="col-md-12">
-                <div class="card border-0 shadow-sm rounded">
-                    <div class="card-body">
-                        <form action="{{ route('category_products.store') }}" method="POST">
-                            @csrf
-                            <div class="form-group mb-3">
-                                <label class="font-weight-bold">NAMA KATEGORI</label>
-                                <input type="text" class="form-control @error('product_category_name') is-invalid @enderror" name="product_category_name" value="{{ old('product_category_name') }}" placeholder="Masukkan Nama Kategori">
-                                @error('product_category_name')
-                                    <div class="alert alert-danger mt-2">{{ $message }}</div>
-                                @enderror
-                            </div>
-                            <button type="submit" class="btn btn-md btn-primary">SIMPAN</button>
-                            <a href="{{ route('category_products.index') }}" class="btn btn-md btn-secondary">KEMBALI</a>
-                        </form>
-                    </div>
+@extends('layouts.app')
+
+@section('content')
+
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="form-card">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h3>Add New Category</h3>
+                    <a href="{{ route('category_products.index') }}" class="btn btn-cancel">
+                        <i class="fa-solid fa-arrow-left me-2"></i>Back to List
+                    </a>
                 </div>
+                
+                @if ($errors->any())
+                    <div class="alert alert-danger">
+                        <ul class="mb-0">
+                            @foreach ($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                @endif
+
+                <form action="{{ route('category_products.store') }}" method="POST">
+                    @csrf
+                    <div class="mb-4">
+                        <label for="product_category_name" class="form-label">Category Name</label>
+                        <input type="text" id="product_category_name" class="form-control" name="product_category_name" value="{{ old('product_category_name') }}" placeholder="" required>
+                    </div>
+                    
+                    <div class="form-actions">
+                        <a href="{{ route('category_products.index') }}" class="btn btn-cancel">Cancel</a>
+                        <button type="submit" class="btn btn-save">Save Category</button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
-</body>
-</html>
+
+@endsection

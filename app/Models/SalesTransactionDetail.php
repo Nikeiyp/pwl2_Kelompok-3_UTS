@@ -15,8 +15,8 @@ class SalesTransactionDetail extends Model
         'sales_transaction_id',
         'product_id',
         'quantity',
-        'price',    // Tambahkan ini
-        'subtotal', // Tambahkan ini
+        'price',    
+        'subtotal', 
     ];
 
     public function product()
