@@ -15,6 +15,7 @@ class AuthController extends Controller
         return view('auth.login');
     }
 
+    // Proses login
     public function login(Request $request)
     {
         $credentials = $request->validate([
@@ -37,20 +38,20 @@ class AuthController extends Controller
         return view('auth.register');
     }
 
-// Proses register
+    // Proses register
     public function register(Request $request)
     {
         $request->validate([
             'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:users', // Langsung gunakan validasi unique
+            'email' => 'required|email',
             'password' => 'required|min:2|confirmed',
         ]);
 
-        // Panggil method dari model untuk membuat user
         User::createUser($request);
 
         return redirect()->route('login')->with('success', 'Akun berhasil dibuat!');
     }
+
 
     // Logout
     public function logout(Request $request)

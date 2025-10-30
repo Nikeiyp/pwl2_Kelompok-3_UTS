@@ -1,27 +1,37 @@
 <?php
 
+use App\Http\Controllers\AuthController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\ProductController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\SalesTransactionController;
+use App\Http\Controllers\CategoryProductController;
+use App\Http\Controllers\SupplierController;
 
-
-
+// Redirect root ke halaman login
 Route::get('/', function () {
-    return view('welcome');
+    return redirect()->route('login');
 });
 
-//route resource for products
-Route::resource('/products', \App\Http\Controllers\ProductController::class);
+// ROUTE AUTHENTICATION
+Route::get('/login', [AuthController::class, 'loginForm'])->name('login');
+Route::post('/login', [AuthController::class, 'login'])->name('login.process');
 
-//route resource for suppliers
-Route::resource('suppliers', \App\Http\Controllers\SupplierController::class);
+Route::get('/register', [AuthController::class, 'registerForm'])->name('register');
+Route::post('/register', [AuthController::class, 'register'])->name('register.process');
 
-//route resource for product category
-Route::resource('/category_products', \App\Http\Controllers\CategoryProductController::class);
-
-//route resource for sales transactions
-
-Route::resource('/transactions', \App\Http\Controllers\SalesTransactionController::class);
+Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
 
-//route resource for dashboard
+// ROUTE YANG DILINDUNGI LOGIN (AUTH MIDDLEWARE)
+Route::middleware(['auth'])->group(function () {
+
+// Route untuk Dashboard
 Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+
+// Resource Routes untuk CRUD
+Route::resource('/products', ProductController::class);
+Route::resource('/transactions', SalesTransactionController::class);
+Route::resource('/category_products', CategoryProductController::class);
+Route::resource('/suppliers', SupplierController::class);
+});
